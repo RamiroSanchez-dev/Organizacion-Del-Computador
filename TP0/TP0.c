@@ -135,12 +135,159 @@ void test05(){
 	codificador64(msg, decodificado);
 	escribirPrueba("5", msg, decodificado, strcmp(decodificado, "RW4gdW4gbHVnYXIgZGUgTGEgTWFuY2hhIGRlIGN1eW8gbm9tYnJlIG5vIHF1aWVybyBhY29yZGFybWU=") == 0);	
 }
-int main(int argc, char * const argv[]){
+
+
+/*
+
+	DECOUDER
+
+*/
+
+
+/*
+01010100	01010001  =   =
+
+01010100	01010001	00000000	00000000
+
+	84			81
+	T           Q
+
+
+
+01001101
+
+	M
+
+
+
+static char encoding_table[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
+                                'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
+                                'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
+                                'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
+                                'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
+                                'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
+                                'w', 'x', 'y', 'z', '0', '1', '2', '3',
+                                '4', '5', '6', '7', '8', '9', '+', '/'};
+*/
+unsigned int optener_posicion64(unsigned char original){
+	
+	unsigned int valor = (unsigned int) original;
+	unsigned int posicion = 0;
+
+	if( valor > 96 && valor < 123){//MINUSCULAS
+			
+			posicion = (unsigned int) valor - 71;
+
+
+	}else if(valor> 64 && valor < 91){//MAYUSCULAS
+			
+			posicion = (unsigned int) valor - 65;
+	}else if(valor > 47 && valor < 58){
+			posicion = (unsigned int) valor +4;
+	}else if(valor == 47){ // +
+	 		posicion = 63;
+	}else if(valor == 43){ ///
+	 		posicion = 62;
+	}else if(valor != 0){
+		
+		char ms1[] = "  <--Entre\n";
+		ms1[0] = (char)original;
+		write(1,ms1, mystrlen(ms1));
+
+		char msg[]= "\n ROMPIO LA DECO de posciones \n";
+		write(1, msg, mystrlen(msg));
+	}
+
+
+	return posicion;
+}
+
+
+
+
+ void decodificador64_4Bytes(unsigned char letras_a_Decodificar[5], char* destino){
+
+	unsigned int decodificado = 0;
+	for(int x = 0 ; x < 4; x++){
+	decodificado += optener_posicion64(letras_a_Decodificar[x]);
+	decodificado = decodificado << 6;
+	}
+	decodificado = decodificado << 2;
+
+	strcpy(destino, (char*)&decodificado);
+
+
+}
+
+void decodificador64(unsigned char* palabra, char* palabra_nueva){
+	
+	size_t tamanio_palabra = strlen((char*)palabra);
+	
+
+	if(palabra[tamanio_palabra-1] == '='){
+		palabra[tamanio_palabra-1] = '\0';
+	 	if(palabra[tamanio_palabra -2] == '=')
+			palabra[tamanio_palabra - 2] = '\0';
+	}
+
+	
+	unsigned char buffer64[5];
+	buffer64[4] = '\0';
+	char bufferNormal[5]; 
+	for(int i = 0; i < tamanio_palabra - 1 ; i += 4){
+		buffer64[0] = palabra[i];
+		buffer64[1] = palabra[i+1];
+		buffer64[2] = palabra[i+2];
+		buffer64[3] = palabra[i+3];
+
+		decodificador64_4Bytes(buffer64, bufferNormal);
+		strcat(palabra_nueva, bufferNormal);
+	}
+
+}
+
+
+
+
+void test06(){
+	unsigned char msg[] = "TQ==";
+	char decodificado[5] = "";
+	decodificador64(msg,decodificado);
+	escribirPrueba("6", msg, decodificado, strcmp(decodificado, "M") == 0);
+}
+
+void test07(){
+	unsigned char msg[] = "TWFu";
+	char decodificado[10] = "";
+	decodificador64(msg,decodificado);
+	escribirPrueba("7", msg, decodificado, strcmp(decodificado, "Man") == 0);
+}
+
+
+void test08(){
+	unsigned char msg[] = "RW4gdW4gbHVnYXIgZGUgTGEgTWFuY2hhIGRlIGN1eW8gbm9tYnJlIG5vIHF1aWVybyBhY29yZGFybWU=";
+	char decodificado[61] = "";
+	decodificador64(msg,decodificado);
+	escribirPrueba("8", msg, decodificado, strcmp(decodificado, "En un lugar de La Mancha de cuyo nombre no quiero acordarme") == 0);
+}
+
+void testEncouder(){
 	test00();
 	test01();
 	test02();
 	test03();
 	test04();
 	test05();
+}
+
+
+void testDecouder(){
+	test06();
+	test07();
+	test08();
+}
+
+int main(int argc, char * const argv[]){
+	testDecouder();
 	return 0;
 }
