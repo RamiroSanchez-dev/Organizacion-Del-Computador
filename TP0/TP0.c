@@ -96,6 +96,38 @@ void decodificar(char nombre_fentrada[MAXIMO_ARCHIVO], char nombre_fsalida[MAXIM
 	fclose(fsalida);
 	free(entrada);
 }
+
+
+void leer_stdin_encode(){
+	int cant_leidos = 30;
+	do{
+		char array_aEnco[4] = "";
+		char array_encodificado[5] = "";
+		cant_leidos = scanf("%c%c%c", &array_aEnco[0], &array_aEnco[1], &array_aEnco[2]);
+		if(cant_leidos == 1){
+			array_aEnco[1] = '\0';
+			array_aEnco[2] = '\0';
+		}
+		if(cant_leidos == 2){
+			array_aEnco[2] = '\0';
+		}
+		codificador64((unsigned char*)array_aEnco, array_encodificado);
+		printf("%s", array_encodificado);
+	}while(cant_leidos == 3);
+}
+
+void leer_stdin_decode(){
+	int cant_leidos = 30;
+	do{
+		char array_aDeco[5] = "";
+		char array_decodificado[4] = "";
+		cant_leidos = scanf("%c%c%c%c", &array_aDeco[0], &array_aDeco[1], &array_aDeco[2], &array_aDeco[3]);
+		decodificador64((unsigned char*)array_aDeco, array_decodificado);
+		printf("%s", array_decodificado);
+	}while(cant_leidos == 4);
+}
+
+
 void mostrar_por_pantalla(char* argumento){
 	size_t tamanio = strlen(argumento);
 	size_t tamanio_encodificado = obtener_tamanio_encode(tamanio);
@@ -105,44 +137,68 @@ void mostrar_por_pantalla(char* argumento){
 }
 
 void mostrar_ayudas(){
-	printf("Escribiste ayudas perruki\n");
+	printf("No podés solo, necesitás ayudas.\n"); // :TODO
+}
+
+void mostrar_version(){
+	printf("Pediste la versión.\n");
 }
 
 int main(int argc, char** argv){
-	int opt;
 
-	char archivo_entrada[MAXIMO_ARCHIVO] = "";
-	char archivo_salida[MAXIMO_ARCHIVO] = "";
-	bool decode = false;
-
-	while((opt = getopt(argc, argv, "hi:o:d")) != -1) {
-		switch(opt){
-			case 'h':
-				mostrar_ayudas();
-			break;
-
-			case 'i':
-				strcpy(archivo_entrada, optarg);
-			break;
-			case 'o':
-				strcpy(archivo_salida, optarg);
-			break;
-			case 'd':
-				decode = true;
-			break;
-			default:
-			break;
+	if(argc == 2){
+		if(argv[1][0] == '-' && argv[1][1] == 'd'){
+			leer_stdin_decode();
 		}
-	}
-
-	if(strlen(archivo_entrada) == 0 || strlen(archivo_salida) == 0){
-		printf("F\n");
-	}
-
-	if(decode){
-		decodificar(archivo_entrada, archivo_salida);
+	}else if(argc == 1){
+		leer_stdin_encode();
 	}else{
-		codificar(archivo_entrada, archivo_salida);
+		int opt;
+
+		char archivo_entrada[MAXIMO_ARCHIVO] = "";
+		char archivo_salida[MAXIMO_ARCHIVO] = "";
+		bool decode = false;
+
+		while((opt = getopt(argc, argv, "hi:o:dv")) != -1) {
+			switch(opt){
+				case 'h':
+					mostrar_ayudas();
+				break;
+				case 'v':
+					mostrar_version();
+				break;
+
+				case 'i':
+					strcpy(archivo_entrada, optarg);
+				break;
+				case 'o':
+					strcpy(archivo_salida, optarg);
+				break;
+				case 'd':
+					decode = true;
+				break;
+				default:
+				break;
+			}
+		}
+
+		if(strlen(archivo_entrada) == 0 || strlen(archivo_salida) == 0){
+			printf("F\n");
+		}
+
+		if(decode){
+			decodificar(archivo_entrada, archivo_salida);
+		}else{
+			codificar(archivo_entrada, archivo_salida);
+		}
+		return 0;
 	}
+
+	printf("\n");
 	return 0;
 }
+
+
+/*STDIN Es la entrada por consola.
+
+STDOUT es la salida por consola.*/

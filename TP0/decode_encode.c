@@ -3,6 +3,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "decode_encode.h"
+#include <stdio.h>
 
 extern size_t mystrlen(const char *);
 
@@ -99,13 +100,7 @@ unsigned int optener_posicion64(unsigned char original){
 	}else if(valor == 43){ ///
 	 		posicion = 62;
 	}else if(valor != 0){
-		
-		char ms1[] = "  <--Entre\n";
-		ms1[0] = (char)original;
-		write(1,ms1, mystrlen(ms1));
-
-		char msg[]= "\n ROMPIO LA DECO de posciones \n";
-		write(1, msg, mystrlen(msg));
+		printf("\n El caracter: '%c' no es un caracter decodificable en base64. Compruebe la entrada.\n", original);
 	}
 
 
