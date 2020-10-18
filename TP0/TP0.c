@@ -1,160 +1,148 @@
-#define SonIGUALES 0
-#include <unistd.h>
 #include <string.h>
+#include <unistd.h>
+#include <getopt.h>
 #include <stdlib.h>
-#include "TP0.h"
+#include <stdio.h>
+#include <stdbool.h>
+#include "decode_encode.h"
 
-extern size_t mystrlen(const char *);
+#define MAXIMO_ARCHIVO 100
 
-
-
-static char encoding_table[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
-                                'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P',
-                                'Q', 'R', 'S', 'T', 'U', 'V', 'W', 'X',
-                                'Y', 'Z', 'a', 'b', 'c', 'd', 'e', 'f',
-                                'g', 'h', 'i', 'j', 'k', 'l', 'm', 'n',
-                                'o', 'p', 'q', 'r', 's', 't', 'u', 'v',
-                                'w', 'x', 'y', 'z', '0', '1', '2', '3',
-                                '4', '5', '6', '7', '8', '9', '+', '/'};
-
-char codificador64_puntual(unsigned char original){
-	int shifteado = original >> 2;
-	char letra = encoding_table[shifteado];
-	return letra;
-}
-
- void codificador64_3Bytes(unsigned char letras_a_codificar[4], char* destino){
-
-	size_t tamanio_palabra = strlen((char*)letras_a_codificar);
-	unsigned int numero = *((unsigned int*) letras_a_codificar);
- 	for(int i = 0; i <= tamanio_palabra; i++){
-		char primerchar = codificador64_puntual(((unsigned char*)(&numero))[0]);
-		numero = numero << 6;
-		destino[i] = primerchar;
- 	}
-	if(tamanio_palabra == 2){
-		destino[3] = '=';
-	}else if(tamanio_palabra == 1){
-		destino[3] = '=';
-		destino[2] = '=';
+size_t obtener_tamanio_encode(size_t tamanio){
+	switch(tamanio%3){
+		case 0:
+			return tamanio*4/3 + 1;
+		break;
+		case 1:
+			return (tamanio+2)*4/3 + 1;
+		break;
+		case 2:
+			return (tamanio+1)*4/3 + 1;
+		break;
 	}
- 	destino[4] = '\0';
+	return 0;
 }
 
-void codificador64(unsigned char* palabra, char* palabra_nueva){
+size_t obtener_tamanio_decode(size_t tamanio){
+	return tamanio*3/4 + 1;
+}
+
+void codificar(char nombre_fentrada[MAXIMO_ARCHIVO], char nombre_fsalida[MAXIMO_ARCHIVO]){
+	FILE* fentrada = fopen(nombre_fentrada, "r");
+	if(!fentrada){
+		return;
+	}
+	FILE* fsalida = fopen(nombre_fsalida, "w");
+	if(!fsalida){
+		fclose(fentrada);
+		return;
+	}
+
+	fseek(fentrada, 0, SEEK_END); 
+	size_t size = (size_t) ftell(fentrada);
+	fseek(fentrada, 0, SEEK_SET); 
+
+	char* entrada = calloc(size + 1, sizeof(char));
+	if(!entrada){
+		fclose(fentrada);
+		fclose(fsalida);
+		return;
+	}
+
+	fread(entrada, 1, size, fentrada);
+
+	char* salida = calloc(obtener_tamanio_encode(size), sizeof(char));
+
+	codificador64((unsigned char*)entrada, salida);
 	
-	size_t tope;
-	size_t tamanio_palabra = strlen((char*)palabra);
-	if(tamanio_palabra%3 == 0)
-		tope = tamanio_palabra + 1;
-	else if(tamanio_palabra%3 == 1)
-		tope = tamanio_palabra + 3;
-	else
-		tope = tamanio_palabra + 2;
+	fwrite(salida, 1, obtener_tamanio_encode(size), fsalida);
 
-	unsigned char* palabra_extendida = calloc(tope, sizeof(unsigned char));
-	strcpy((char*)palabra_extendida, (char*) palabra);
-
-	unsigned char buffer[4];
-	buffer[3] = '\0';
-	char buffer64[5];
-	for(int i = 0; i < tope - 1; i += 3){
-		buffer[0] = palabra_extendida[i];
-		buffer[1] = palabra_extendida[i+1];
-		buffer[2] = palabra_extendida[i+2];
-
-		codificador64_3Bytes(buffer, buffer64);
-		strcat(palabra_nueva, buffer64);
-	}
-
-	free(palabra_extendida);
+	fclose(fentrada);
+	fclose(fsalida);
+	free(entrada);
 }
 
-
-
-/*
-
-	DECOUDER
-
-*/
-
-
-unsigned int optener_posicion64(unsigned char original){
-	
-	unsigned int valor = (unsigned int) original;
-	unsigned int posicion = 0;
-
-	if( valor > 96 && valor < 123){//MINUSCULAS
-			
-			posicion = (unsigned int) valor - 71;
-
-
-	}else if(valor> 64 && valor < 91){//MAYUSCULAS
-			
-			posicion = (unsigned int) valor - 65;
-	}else if(valor > 47 && valor < 58){
-			posicion = (unsigned int) valor +4;
-	}else if(valor == 47){ // +
-	 		posicion = 63;
-	}else if(valor == 43){ ///
-	 		posicion = 62;
-	}else if(valor != 0){
-		
-		char ms1[] = "  <--Entre\n";
-		ms1[0] = (char)original;
-		write(1,ms1, mystrlen(ms1));
-
-		char msg[]= "\n ROMPIO LA DECO de posciones \n";
-		write(1, msg, mystrlen(msg));
+void decodificar(char nombre_fentrada[MAXIMO_ARCHIVO], char nombre_fsalida[MAXIMO_ARCHIVO]){
+	FILE* fentrada = fopen(nombre_fentrada, "r");
+	if(!fentrada){
+		return;
+	}
+	FILE* fsalida = fopen(nombre_fsalida, "w");
+	if(!fsalida){
+		fclose(fentrada);
+		return;
 	}
 
+	fseek(fentrada, 0, SEEK_END); 
+	size_t size = (size_t) ftell(fentrada);
+	fseek(fentrada, 0, SEEK_SET); 
 
-	return posicion;
+	char* entrada = calloc(size + 1, sizeof(char));
+	if(!entrada){
+		fclose(fentrada);
+		fclose(fsalida);
+		return;
+	}
+
+	fread(entrada, 1, size, fentrada);
+
+	char* salida = calloc(obtener_tamanio_decode(size), sizeof(char));
+
+	decodificador64((unsigned char*)entrada, salida);
+	
+	fwrite(salida, 1, obtener_tamanio_decode(size), fsalida);
+
+	fclose(fentrada);
+	fclose(fsalida);
+	free(entrada);
+}
+void mostrar_por_pantalla(char* argumento){
+	size_t tamanio = strlen(argumento);
+	size_t tamanio_encodificado = obtener_tamanio_encode(tamanio);
+	char* encodificado = calloc(tamanio_encodificado, sizeof(char));
+	codificador64((unsigned char*)argumento, encodificado);
+	printf("%s", encodificado);
 }
 
-
-
-
- void decodificador64_4Bytes(unsigned char letras_a_Decodificar[5], char* destino){
-
-	unsigned int decodificado = 0;
-	for(int x = 0 ; x < 4; x++){
-	decodificado += optener_posicion64(letras_a_Decodificar[x]);
-	decodificado = decodificado << 6;
-	}
-	decodificado = decodificado << 2;
-
-	strcpy(destino, (char*)&decodificado);
-
-
+void mostrar_ayudas(){
+	printf("Escribiste ayudas perruki\n");
 }
 
-void decodificador64(unsigned char* palabra, char* palabra_nueva){
-	
-	size_t tamanio_palabra = strlen((char*)palabra);
-	
+int main(int argc, char** argv){
+	int opt;
 
-	if(palabra[tamanio_palabra-1] == '='){
-		palabra[tamanio_palabra-1] = '\0';
-	 	if(palabra[tamanio_palabra -2] == '=')
-			palabra[tamanio_palabra - 2] = '\0';
+	char archivo_entrada[MAXIMO_ARCHIVO] = "";
+	char archivo_salida[MAXIMO_ARCHIVO] = "";
+	bool decode = false;
+
+	while((opt = getopt(argc, argv, "hi:o:d")) != -1) {
+		switch(opt){
+			case 'h':
+				mostrar_ayudas();
+			break;
+
+			case 'i':
+				strcpy(archivo_entrada, optarg);
+			break;
+			case 'o':
+				strcpy(archivo_salida, optarg);
+			break;
+			case 'd':
+				decode = true;
+			break;
+			default:
+			break;
+		}
 	}
 
-	
-	unsigned char buffer64[5];
-	buffer64[4] = '\0';
-	char bufferNormal[5]; 
-	for(int i = 0; i < tamanio_palabra - 1 ; i += 4){
-		buffer64[0] = palabra[i];
-		buffer64[1] = palabra[i+1];
-		buffer64[2] = palabra[i+2];
-		buffer64[3] = palabra[i+3];
-
-		decodificador64_4Bytes(buffer64, bufferNormal);
-		strcat(palabra_nueva, bufferNormal);
+	if(strlen(archivo_entrada) == 0 || strlen(archivo_salida) == 0){
+		printf("F\n");
 	}
 
+	if(decode){
+		decodificar(archivo_entrada, archivo_salida);
+	}else{
+		codificar(archivo_entrada, archivo_salida);
+	}
+	return 0;
 }
-
-
-
