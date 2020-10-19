@@ -281,14 +281,25 @@ void mostrar_version(){
 	printf("Version 1.0.0\n");
 }
 
+
 int main(int argc, char** argv){
+	
+	static struct option long_options[] = {
+                   {"version", no_argument, 0, 'v'},
+                   {"help",no_argument, 0, 'h'},
+                   {"input",required_argument, 0, 'i'},
+                   {"output",required_argument, 0, 'o'},
+                   {"decode", no_argument, 0, 'd'},
+                   {0,0,0,0}
+               };
+
 	int opt;
 	char archivo_entrada[MAXIMO_ARCHIVO] = "";
 	char archivo_salida[MAXIMO_ARCHIVO] = "";
 	bool decode = false;
 	bool pidio_info = false;
 
-	while((opt = getopt(argc, argv, "i:o:dvh")) != -1) {
+	while((opt = getopt_long(argc, argv, "i:o:dvh",long_options,NULL)) != -1) {
 		switch(opt){
 			case 'i':
 				strcpy(archivo_entrada, optarg);
