@@ -23,7 +23,7 @@ static char encoding_table[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
 
 */
 
- void codificador64_3Bytes(unsigned char letras_a_codificar[4], char* destino){
+void codificador64_3Bytes(unsigned char letras_a_codificar[4], char* destino){
 	unsigned int i1 = (unsigned int) letras_a_codificar[0] >> 2;
 	unsigned int i2 = ((unsigned int) letras_a_codificar[0] & 0x3) << 4 | letras_a_codificar[1] >> 4;
 	unsigned int i3 = ((unsigned int) letras_a_codificar[1] & 0xF) << 2 | letras_a_codificar[2] >> 6;
@@ -35,7 +35,6 @@ static char encoding_table[] = {'A', 'B', 'C', 'D', 'E', 'F', 'G', 'H',
 	destino[3] = encoding_table[i4];
  	destino[4] = '\0';
 }
-
 void codificar_archivo(FILE* fentrada, FILE* fsalida){
 	bool sigo_leyendo = true;
 	do{
@@ -47,16 +46,20 @@ void codificar_archivo(FILE* fentrada, FILE* fsalida){
 			codificador64_3Bytes((unsigned char*)array_aEnco, array_encodificado);
 		else if(leidos == 2){
 			codificador64_3Bytes((unsigned char*)array_aEnco, array_encodificado);
+			array_encodificado[3] = '=';
 			sigo_leyendo = false;
 		}else if(leidos == 1){
 			codificador64_3Bytes((unsigned char*)array_aEnco, array_encodificado);
+			array_encodificado[2] = '=';
+			array_encodificado[3] = '=';
 			sigo_leyendo = false;
-		}else
+		}else{
 			sigo_leyendo = false;
+			break;
+		}
 		fprintf(fsalida,"%s", array_encodificado);
 	}while(sigo_leyendo);
 }
-
 
 
 /*
@@ -64,6 +67,7 @@ void codificar_archivo(FILE* fentrada, FILE* fsalida){
 	DECODIFICADOR
 
 */
+
 unsigned int obtener_posicion64(unsigned char original){
 	
 	unsigned int valor = (unsigned int) original;
@@ -117,15 +121,20 @@ void decodificar_archivo(FILE* fentrada, FILE* fsalida){
 		char array_decodificado[4] = "";
 		array_decodificado[3] = '\0';
 		fscanf(fentrada,"%c%c%c%c", &array_aDeco[0], &array_aDeco[1], &array_aDeco[2], &array_aDeco[3]);
-		if(strlen(array_aDeco) == 0 || (strlen(array_aDeco) == 1 && array_aDeco[0] == '\n')){
+		if(array_aDeco[0] == '\n'){
 			sigo_leyendo = false;
-		}else if(strlen(array_aDeco) < 4){
-			printf("Entrada invalida. La entrada deberia ser multiplo de 4\n");
-			sigo_leyendo = false;
-		}else{
-			decodificador64_4Bytes((unsigned char*)array_aDeco, (unsigned char*) array_decodificado);
-			fprintf(fsalida,"%s", (unsigned char*) array_decodificado);
+			break;
 		}
+		if(array_aDeco[3] == '='){
+			array_aDeco[3] = '\0';
+			if(array_aDeco[2] == '='){
+				array_aDeco[2] = '\0';
+			}
+			sigo_leyendo = false;
+		}
+		decodificador64_4Bytes((unsigned char*)array_aDeco, (unsigned char*) array_decodificado);
+		fprintf(fsalida,"%s", (unsigned char*) array_decodificado);
+
 	}while(sigo_leyendo);
 }
 
