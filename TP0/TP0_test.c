@@ -3,6 +3,7 @@
 #include <stdbool.h>
 #include <unistd.h>
 #include <string.h>
+#include <stdio.h>
 
 extern size_t mystrlen(const char *);
 
@@ -12,21 +13,30 @@ const char* Prueba_Fallada = "No paso la prueba :(";
 
 void escribirPrueba(char* numPrueba, unsigned char* palabraIngresada, char* palabraObtenida, bool pasoPrueba){
 	if(pasoPrueba){
-		char primerParte[]  = "Pasamos la prueba ";
-		write(1, primerParte, mystrlen(primerParte));
+
+		printf("%s\n",Prueba_Pasada);
+
 	}else{
-		char primerParte[]  = "No pasamos la prueba ";
-		write(1, primerParte, mystrlen(primerParte));
+		printf("%s\n",Prueba_Fallada);
 	}
 	char segundaParte[] = ", la palabra ingresada es: ";
-	char tercerParte[] = ", la palabra obtenida fue: ";	
-	write(1, numPrueba, mystrlen(numPrueba));
+
+	char tercerParte[] = ", la palabra obtenida fue: ";
+
+	printf("%s %s\n",segundaParte,palabraIngresada);
+
+	printf("%s %s\n",tercerParte,palabraObtenida);
+
+
+	/*write(1, numPrueba, mystrlen(numPrueba));
 	write(1, segundaParte, mystrlen(numPrueba));
 	write(1, (char*)palabraIngresada, mystrlen((char*)palabraIngresada));
 	write(1, tercerParte, mystrlen(tercerParte));
 	write(1, palabraObtenida, mystrlen(palabraObtenida));
 	char carro[] = "\n";
-	write(1, carro, mystrlen(carro));
+	write(1, carro, mystrlen(carro));*/
+
+
 }
 
 
@@ -34,6 +44,8 @@ void test00(){
 	unsigned char msg[] = "Man";//TWFu
 	char decodificado[5] = "";
 	codificador64(msg, decodificado);
+
+
 	escribirPrueba("0", msg, decodificado, strcmp(decodificado, "TWFu") == 0);
 }
 
@@ -118,7 +130,7 @@ void testDecouder(){
 
 int main(int argc, char const *argv[])
 {
-	testEncouder();
+	//testEncouder();
 	testDecouder();
 
 

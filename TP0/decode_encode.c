@@ -27,18 +27,39 @@ char codificador64_puntual(unsigned char original){
  void codificador64_3Bytes(unsigned char letras_a_codificar[4], char* destino){
 
 	size_t tamanio_palabra = strlen((char*)letras_a_codificar);
-	unsigned int numero = *((unsigned int*) letras_a_codificar);
- 	for(int i = 0; i <= tamanio_palabra; i++){
-		char primerchar = codificador64_puntual(((unsigned char*)(&numero))[0]);
-		numero = numero << 6;
-		destino[i] = primerchar;
- 	}
+
+
+
+	unsigned int i1 = (unsigned int) letras_a_codificar[0] >> 2;
+
+	unsigned int i2 = ((unsigned int) letras_a_codificar[0] & 0x3) << 4 | letras_a_codificar[1] >> 4;
+
+	unsigned int i3 = ((unsigned int) letras_a_codificar[1] & 0xF) << 2 | letras_a_codificar[2] >> 6;
+
+	unsigned int i4 = ((unsigned int) letras_a_codificar[2] & 0x3F);
+
+
+	
 	if(tamanio_palabra == 2){
+		destino[0] = encoding_table[i1];
+		destino[1] = encoding_table[i2];
+		destino[2] = encoding_table[i3];
+
 		destino[3] = '=';
 	}else if(tamanio_palabra == 1){
+		destino[0] = encoding_table[i1];
+		destino[1] = encoding_table[i2];
 		destino[3] = '=';
 		destino[2] = '=';
+	}else{
+		destino[0] = encoding_table[i1];
+		destino[1] = encoding_table[i2];
+		destino[2] = encoding_table[i3];
+		destino[3] = encoding_table[i4];
 	}
+
+
+
  	destino[4] = '\0';
 }
 
@@ -75,12 +96,12 @@ void codificador64(unsigned char* palabra, char* palabra_nueva){
 
 /*
 
-	DECOUDER
+	DECODIFICADOR
 
 */
 
 
-unsigned int optener_posicion64(unsigned char original){
+unsigned int obtener_posicion64(unsigned char original){
 	
 	unsigned int valor = (unsigned int) original;
 	unsigned int posicion = 0;
@@ -112,14 +133,64 @@ unsigned int optener_posicion64(unsigned char original){
 
  void decodificador64_4Bytes(unsigned char letras_a_Decodificar[5], char* destino){
 
-	unsigned int decodificado = 0;
-	for(int x = 0 ; x < 4; x++){
-	decodificado += optener_posicion64(letras_a_Decodificar[x]);
-	decodificado = decodificado << 6;
-	}
-	decodificado = decodificado << 2;
+	
+	
+/*
+00010011  00010110  00000101 00101110
+	
+	01001101    01100001    01101110
+	01001100
+	||||||||
+	00000001
 
-	strcpy(destino, (char*)&decodificado);
+	01001101
+
+
+
+	01100000
+	
+
+
+	01100001
+
+
+	2 00000101  --> 01000000
+	3 00101110
+	queremos 01101110
+
+
+
+
+	TQ==;
+
+	00010011  00010110 00000000 00000000
+
+
+		1010101
+
+
+	recibimos vector -> buscamos sus ubicaciones -> tenemos 4 ubucacuones -> lo original!  
+
+
+*/
+ 	unsigned int vector_posiciones[5];
+
+ 	vector_posiciones[0] = obtener_posicion64(letras_a_Decodificar[0]);
+ 	vector_posiciones[1] = obtener_posicion64(letras_a_Decodificar[1]);
+ 	vector_posiciones[2] = obtener_posicion64(letras_a_Decodificar[2]);
+ 	vector_posiciones[3] = obtener_posicion64(letras_a_Decodificar[3]);
+
+
+	char c1 =  (char) (vector_posiciones[0] << 2  | vector_posiciones[1] >> 4);
+ 
+	char c2 = (char) (vector_posiciones[1] << 4  | vector_posiciones[2] >> 2);
+
+	char c3 =  (char) (vector_posiciones[2] << 6 | vector_posiciones[3]);
+	
+	destino[0] = c1;
+	destino[1] = c2;
+	destino[2] = c3;
+	//strcpy(destino, (char*)&decodificado);
 
 
 }
