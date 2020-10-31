@@ -8,103 +8,13 @@
 
 #define MAXIMO_ARCHIVO 100
 
-/* DECODE */
-size_t obtener_tamanio_decode(size_t tamanio){
-	return tamanio*3/4 + 1;
-}
-
-void decodificar_archivo_archivo(char nombre_fentrada[MAXIMO_ARCHIVO], char nombre_fsalida[MAXIMO_ARCHIVO]){
-	FILE* fentrada = fopen(nombre_fentrada, "r");
-	if(!fentrada){
-		return;
-	}
-	FILE* fsalida = fopen(nombre_fsalida, "w");
-	if(!fsalida){
-		fclose(fentrada);
-		return;
-	}
-
-	fseek(fentrada, 0, SEEK_END); 
-	size_t size = (size_t) ftell(fentrada);
-	fseek(fentrada, 0, SEEK_SET); 
-
-	char* entrada = calloc(size + 1, sizeof(char));
-	if(!entrada){
-		fclose(fentrada);
-		fclose(fsalida);
-		return;
-	}
-
-	fread(entrada, 1, size, fentrada);
-
-	char* salida = calloc(obtener_tamanio_decode(size), sizeof(char));
-
-	decodificador64((unsigned char*)entrada, salida);
-	
-	fwrite(salida, 1, obtener_tamanio_decode(size), fsalida);
-
-	fclose(fentrada);
-	fclose(fsalida);
-	free(entrada);
-}
-
-void decodificar_archivo_stdout(char nombre_fentrada[MAXIMO_ARCHIVO]){
-	FILE* fentrada = fopen(nombre_fentrada, "r");
-	if(!fentrada){
-		return;
-	}
-	fseek(fentrada, 0, SEEK_END);
-	size_t size = (size_t) ftell(fentrada);
-	fseek(fentrada, 0, SEEK_SET);
-
-	char* entrada = calloc(size + 1, sizeof(char));
-	if(!entrada){
-		fclose(fentrada);
-		return;
-	}
-
-	fread(entrada, 1, size, fentrada);
-
-	char* salida = calloc(obtener_tamanio_decode(size), sizeof(char));
-
-	decodificador64((unsigned char*)entrada, salida);
-
-	printf("%s",salida);
-
-	fclose(fentrada);
-	free(entrada);
-}
-
-void decodificar_stdin_archivo(char nombre_fsalida[MAXIMO_ARCHIVO]){
-	FILE* fsalida = fopen(nombre_fsalida, "w");
-	if(!fsalida){
-		// TODO: ESCRIBIR ALGO.
-		return;
-	}
-
+void decodificar_archivo(FILE* fentrada, FILE* fsalida){
 	bool sigo_leyendo = true;
 	do{
 		char array_aDeco[5] = "";
 		char array_decodificado[4] = "";
-		scanf("%c%c%c%c", &array_aDeco[0], &array_aDeco[1], &array_aDeco[2], &array_aDeco[3]);
-		if(strlen(array_aDeco) == 0){
-			sigo_leyendo = false;
-		}else if(strlen(array_aDeco) < 4){
-			printf("Entrada invalida. La entrada deberia ser multiplo de 4\n");
-			sigo_leyendo = false;
-		}else{
-			decodificador64((unsigned char*)array_aDeco, array_decodificado);
-			fwrite(array_decodificado, 1, obtener_tamanio_decode(strlen(array_decodificado)), fsalida);
-		}
-	}while(sigo_leyendo);
-}
-
-void decodificar_stdin_stdout(){
-	bool sigo_leyendo = true;
-	do{
-		char array_aDeco[5] = "";
-		char array_decodificado[4] = "";
-		scanf("%c%c%c%c", &array_aDeco[0], &array_aDeco[1], &array_aDeco[2], &array_aDeco[3]);
+		array_decodificado[3] = '\0';
+		fscanf(fentrada,"%c%c%c%c", &array_aDeco[0], &array_aDeco[1], &array_aDeco[2], &array_aDeco[3]);
 		if(strlen(array_aDeco) == 0 || (strlen(array_aDeco) == 1 && array_aDeco[0] == '\n')){
 			sigo_leyendo = false;
 		}else if(strlen(array_aDeco) < 4){
@@ -112,104 +22,19 @@ void decodificar_stdin_stdout(){
 			sigo_leyendo = false;
 		}else{
 			decodificador64((unsigned char*)array_aDeco, array_decodificado);
-			printf("%s", array_decodificado);
+			fprintf(fsalida,"%s", array_decodificado);
 		}
 	}while(sigo_leyendo);
 }
 
 
-/* ENCODE */
-size_t obtener_tamanio_encode(size_t tamanio){
-	switch(tamanio%3){
-		case 0:
-			return tamanio*4/3 + 1;
-		break;
-		case 1:
-			return (tamanio+2)*4/3 + 1;
-		break;
-		case 2:
-			return (tamanio+1)*4/3 + 1;
-		break;
-	}
-	return 0;
-}
-
-void codificar_archivo_archivo(char nombre_fentrada[MAXIMO_ARCHIVO], char nombre_fsalida[MAXIMO_ARCHIVO]){
-	FILE* fentrada = fopen(nombre_fentrada, "r");
-	if(!fentrada){
-		printf("No se pudo abrir al archivo de entrada.\n");
-		return;
-	}
-	FILE* fsalida = fopen(nombre_fsalida, "w");
-	if(!fsalida){
-		fclose(fentrada);
-		return;
-	}
-
-	fseek(fentrada, 0, SEEK_END); 
-	size_t size = (size_t) ftell(fentrada);
-	fseek(fentrada, 0, SEEK_SET); 
-
-	char* entrada = calloc(size + 1, sizeof(char));
-	if(!entrada){
-		fclose(fentrada);
-		fclose(fsalida);
-		return;
-	}
-
-	fread(entrada, 1, size, fentrada);
-
-	char* salida = calloc(obtener_tamanio_encode(size), sizeof(char));
-
-	codificador64((unsigned char*)entrada, salida);
-	
-	fwrite(salida, 1, obtener_tamanio_encode(size), fsalida);
-
-	fclose(fentrada);
-	fclose(fsalida);
-	free(entrada);
-}
-
-void codificar_archivo_stdout(char nombre_fentrada[MAXIMO_ARCHIVO]){
-	FILE* fentrada = fopen(nombre_fentrada, "r");
-	if(!fentrada){
-		printf("No se pudo abrir al archivo de entrada.\n");
-		return;
-	}
-
-	fseek(fentrada, 0, SEEK_END); 
-	size_t size = (size_t) ftell(fentrada);
-	fseek(fentrada, 0, SEEK_SET); 
-
-	char* entrada = calloc(size + 1, sizeof(char));
-	if(!entrada){
-		fclose(fentrada);
-		return;
-	}
-
-	fread(entrada, 1, size, fentrada);
-
-	char* salida = calloc(obtener_tamanio_encode(size), sizeof(char));
-
-	codificador64((unsigned char*)entrada, salida);
-	
-	printf("%s", salida);
-
-	fclose(fentrada);
-	free(entrada);
-}
-
-void codificar_stdin_archivo(char nombre_fsalida[MAXIMO_ARCHIVO]){
-	FILE* fsalida = fopen(nombre_fsalida, "w");
-	if(!fsalida){
-		// TODO: ESCRIBIR ALGO.
-		return;
-	}
+void codificar_archivo(FILE* fentrada, FILE* fsalida){
 	bool sigo_leyendo = true;
 	do{
 		char array_aEnco[4] = "";
 		char array_encodificado[5] = "";
-		scanf("%c%c%c", &array_aEnco[0], &array_aEnco[1], &array_aEnco[2]);
+		array_encodificado[4] = '\0'; 
+		fscanf(fentrada,"%c%c%c", &array_aEnco[0], &array_aEnco[1], &array_aEnco[2]);
 		if(strlen(array_aEnco) == 3){
 			codificador64((unsigned char*)array_aEnco, array_encodificado);
 		}else if(strlen(array_aEnco) == 2){
@@ -222,29 +47,7 @@ void codificar_stdin_archivo(char nombre_fsalida[MAXIMO_ARCHIVO]){
 		}else{
 			sigo_leyendo = false;
 		}
-		fwrite(array_encodificado, 1, obtener_tamanio_decode(strlen(array_encodificado)), fsalida);
-	}while(sigo_leyendo);
-}
-
-void codificar_stdin_stdout(){
-	bool sigo_leyendo = true;
-	do{
-		char array_aEnco[4] = "";
-		char array_encodificado[5] = "";
-		scanf("%c%c%c", &array_aEnco[0], &array_aEnco[1], &array_aEnco[2]);
-		if(strlen(array_aEnco) == 3){
-			codificador64((unsigned char*)array_aEnco, array_encodificado);
-		}else if(strlen(array_aEnco) == 2){
-			codificador64((unsigned char*)array_aEnco, array_encodificado);
-			sigo_leyendo = false;
-		}else if(strlen(array_aEnco) == 1){
-			array_aEnco[2] = '\0';
-			codificador64((unsigned char*)array_aEnco, array_encodificado);
-			sigo_leyendo = false;
-		}else{
-			sigo_leyendo = false;
-		}
-		printf("%s", array_encodificado);
+		fprintf(fsalida,"%s", array_encodificado);
 	}while(sigo_leyendo);
 }
 
@@ -294,19 +97,20 @@ int main(int argc, char** argv){
                };
 
 	int opt;
-	char archivo_entrada[MAXIMO_ARCHIVO] = "";
-	char archivo_salida[MAXIMO_ARCHIVO] = "";
+	FILE *fentrada, *fsalida;
+	char nombre_archivo_entrada[MAXIMO_ARCHIVO] = "";
+	char nombre_archivo_salida[MAXIMO_ARCHIVO] = "";
 	bool decode = false;
 	bool pidio_info = false;
 
 	while((opt = getopt_long(argc, argv, "i:o:dvh",long_options,NULL)) != -1) {
 		switch(opt){
 			case 'i':
-				strcpy(archivo_entrada, optarg);
+				strcpy(nombre_archivo_entrada, optarg);
 			break;
 
 			case 'o':
-				strcpy(archivo_salida, optarg);
+				strcpy(nombre_archivo_salida, optarg);
 			break;
 
 			case 'd':
@@ -332,29 +136,34 @@ int main(int argc, char** argv){
 		}
 	}
 	
-	if(pidio_info){
+	if(pidio_info)
 		return 0;
+
+	if(strlen(nombre_archivo_entrada) == 0)
+		fentrada = stdin;
+	else 
+		fentrada = fopen(nombre_archivo_entrada, "r");
+	if(!fentrada){
+		printf("No se logro abrir el archivo de entrada.\n");
+		return -1;
 	}
-	if(decode){
-		if(strlen(archivo_entrada) == 0 && strlen(archivo_salida) == 0){
-			decodificar_stdin_stdout();
-		}else if(strlen(archivo_entrada) != 0 && strlen(archivo_salida) == 0){
-			decodificar_archivo_stdout(archivo_entrada);
-		}else if(strlen(archivo_entrada) == 0 && strlen(archivo_salida) != 0){
-			decodificar_stdin_archivo(archivo_salida);
-		}else{
-			decodificar_archivo_archivo(archivo_entrada, archivo_salida);
-		}
-	}else{
-		if(strlen(archivo_entrada) == 0 && strlen(archivo_salida) == 0){
-			codificar_stdin_stdout();
-		}else if(strlen(archivo_entrada) != 0 && strlen(archivo_salida) == 0){
-			codificar_archivo_stdout(archivo_entrada);
-		}else if(strlen(archivo_entrada) == 0 && strlen(archivo_salida) != 0){
-			codificar_stdin_archivo(archivo_salida);
-		}else{
-			codificar_archivo_archivo(archivo_entrada, archivo_salida);
-		}
-	}		
+	if(strlen(nombre_archivo_salida) == 0)
+		fsalida = stdout; 
+	else
+		fsalida = fopen(nombre_archivo_salida, "w");
+	if(!fsalida){
+		fclose(fentrada);
+		printf("No se logro abrir el archivo de salida.\n");
+		return -1;
+	}
+
+
+	if(decode)
+		decodificar_archivo(fentrada, fsalida);		
+	else
+		codificar_archivo(fentrada, fsalida);	
+
+	fclose(fentrada);
+	fclose(fsalida);	
 	return 0;
 }
