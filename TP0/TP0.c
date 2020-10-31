@@ -8,49 +8,6 @@
 
 #define MAXIMO_ARCHIVO 100
 
-void decodificar_archivo(FILE* fentrada, FILE* fsalida){
-	bool sigo_leyendo = true;
-	do{
-		char array_aDeco[5] = "";
-		char array_decodificado[4] = "";
-		array_decodificado[3] = '\0';
-		fscanf(fentrada,"%c%c%c%c", &array_aDeco[0], &array_aDeco[1], &array_aDeco[2], &array_aDeco[3]);
-		if(strlen(array_aDeco) == 0 || (strlen(array_aDeco) == 1 && array_aDeco[0] == '\n')){
-			sigo_leyendo = false;
-		}else if(strlen(array_aDeco) < 4){
-			printf("Entrada invalida. La entrada deberia ser multiplo de 4\n");
-			sigo_leyendo = false;
-		}else{
-			decodificador64((unsigned char*)array_aDeco, array_decodificado);
-			fprintf(fsalida,"%s", array_decodificado);
-		}
-	}while(sigo_leyendo);
-}
-
-
-void codificar_archivo(FILE* fentrada, FILE* fsalida){
-	bool sigo_leyendo = true;
-	do{
-		char array_aEnco[4] = "";
-		char array_encodificado[5] = "";
-		array_encodificado[4] = '\0'; 
-		fscanf(fentrada,"%c%c%c", &array_aEnco[0], &array_aEnco[1], &array_aEnco[2]);
-		if(strlen(array_aEnco) == 3){
-			codificador64((unsigned char*)array_aEnco, array_encodificado);
-		}else if(strlen(array_aEnco) == 2){
-			codificador64((unsigned char*)array_aEnco, array_encodificado);
-			sigo_leyendo = false;
-		}else if(strlen(array_aEnco) == 1){
-			array_aEnco[2] = '\0';
-			codificador64((unsigned char*)array_aEnco, array_encodificado);
-			sigo_leyendo = false;
-		}else{
-			sigo_leyendo = false;
-		}
-		fprintf(fsalida,"%s", array_encodificado);
-	}while(sigo_leyendo);
-}
-
 
 void mostrar_ayudas(){
 	printf("\n");
