@@ -1,0 +1,10 @@
+#!/bin/bash
+tst="test03"
+
+cat resources/quijote.txt | ./TP0 | ./TP0 -d -o quijote2.txt
+
+(($(diff -eq resources/quijote.txt quijote2.txt > /dev/null 2>&1)) &&
+   echo "\e[32;1m ✓ $tst\e[0m: Se codifica y decodifica la primera oración del quijote. \n\tCoinciden") ||
+  (echo "\e[31;1m ✗ $tst\e[0m: Se codifica y decodifica la primera oración del quijote. \n\tNo coinciden")
+
+rm quijote2.txt

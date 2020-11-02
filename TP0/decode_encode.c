@@ -109,8 +109,8 @@ void decodificar_archivo(FILE* fentrada, FILE* fsalida){
 		char array_decodificado[3] = "";
 		size_t tamanio_decodificado = 3;
 
-		fscanf(fentrada,"%c%c%c%c", &array_aDeco[0], &array_aDeco[1], &array_aDeco[2], &array_aDeco[3]);
-		if(array_aDeco[0] == '\n'){
+		int leidos = fscanf(fentrada,"%c%c%c%c", &array_aDeco[0], &array_aDeco[1], &array_aDeco[2], &array_aDeco[3]);
+		if(array_aDeco[0] == '\n' || leidos != 4){
 			sigo_leyendo = false;
 			return;
 		}
