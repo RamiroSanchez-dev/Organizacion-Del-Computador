@@ -1,10 +1,8 @@
 #!/bin/bash
 tst="test04"
+wrd="TWFtYnJ1IHNlIGZ1ZSBhIGxhIGd1ZXJyYQ=="
+spc="Mambru se fue a la guerra"
+res=$(echo -n $wrd | ./TP0 -d)
 
-cat resources/ElQuijote.txt | ./TP0 | ./TP0 -d -o quijote2.txt
-
-(($(diff -eq resources/ElQuijote.txt quijote2.txt > /dev/null 2>&1)) &&
-   echo "\e[32;1m ✓ $tst\e[0m: Se codifica y decodifica el quijote. \n\tCoinciden") ||
-  (echo "\e[31;1m ✗ $tst\e[0m: Se codifica y decodifica el quijote. \n\tNo coinciden")
-
-rm quijote2.txt
+[ "$spc" = "$res" ]&& echo "\e[32;1m ✓ $tst\e[0m: Decodificar palabra. $wrd \n\t Decodificación: $res"
+[ "$spc" != "$res" ]&& echo "\e[31;1m ✗ $tst\e[0m: Decodificar palabra. $wrd \n\t Decodificación: $res"

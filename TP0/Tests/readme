@@ -1,1 +1,12 @@
-Antes de ejecutar los test compile el programa con el makefile en el direcotrio previo y traiga el archivo ejecutable a este directorio y con sh ejecute los programas
+Antes de ejecutar los test compile el programa con el makefile en el directorio previo y traiga el archivo ejecutable a este directorio y con sh ejecute las pruebas.
+
+> sh test0X
+	Para ejecutar un test en particular.
+
+ó
+
+> sh tests
+	Para ejecutar todos los test. [Exceptuando el 7]
+
+
+Observación: El test07 es un test que tarda tiempo en ejecutarse. Se debe codificar y decodificar 1Gb de información.
