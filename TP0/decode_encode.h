@@ -6,11 +6,9 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <string.h>
-/*
-void codificador64(unsigned char* palabra, char* palabra_nueva);
 
-void decodificador64(unsigned char* palabra, char* palabra_nueva);
-*/
+#define nombre_archivo_log "log-errores"
+
 void decodificar_archivo(FILE* fentrada, FILE* fsalida);
 
 void codificar_archivo(FILE* fentrada, FILE* fsalida);

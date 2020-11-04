@@ -1,0 +1,8 @@
+#!/bin/bash
+tst="test11"
+wrd="TW"
+echo -n $wrd | ./TP0 -d
+res=$(wc -c log-errores)
+
+[ "$res" != "" ]&& echo "\e[32;1m ✓ $tst\e[0m: Decodificar palabra invalida: $wrd \n\t Se informó del error."
+[ "$res" = "" ]&& echo "\e[31;1m x $tst\e[0m: Decodificar palabra invalida: $wrd \n\t No se informó del error."

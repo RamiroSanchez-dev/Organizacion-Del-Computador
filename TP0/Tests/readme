@@ -1,12 +1,12 @@
 Antes de ejecutar los test compile el programa con el makefile en el directorio previo y traiga el archivo ejecutable a este directorio y con sh ejecute las pruebas.
 
-> sh test0X
+> sh nombreTest
 	Para ejecutar un test en particular.
 
 ó
 
 > sh tests
-	Para ejecutar todos los test. [Exceptuando el 7]
+	Para ejecutar todos los test. [Exceptuando el X]
 
 
-Observación: El test07 es un test que tarda tiempo en ejecutarse. Se debe codificar y decodificar 1Gb de información.
+Observación: El testX es un test que tarda tiempo en ejecutarse. Se debe codificar y decodificar 1Gb de información.

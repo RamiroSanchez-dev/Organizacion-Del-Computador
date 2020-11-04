@@ -1,0 +1,8 @@
+#!/bin/bash
+tst="test09"
+wrd=""
+spc=""
+res=$(echo -n $wrd | ./TP0)
+
+[ "$spc" = "$res" ]&& echo "\e[32;1m ✓ $tst\e[0m: Codificar palabra. $wrd \n\t Codificación: $res"
+[ "$spc" != "$res" ]&& echo "\e[31;1m ✗ $tst\e[0m: Codificar palabra. $wrd \n\t Codificación: $res"

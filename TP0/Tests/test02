@@ -1,8 +1,8 @@
 #!/bin/bash
 tst="test02"
-wrd="ManCat"
-spc="TWFuQ2F0"
+wrd="Te falta odio, Sasuke"
+spc="VGUgZmFsdGEgb2RpbywgU2FzdWtl"
 res=$(echo -n $wrd | ./TP0)
 
-[ $spc = $res ]&& echo "\e[32;1m ✓ $tst\e[0m: Codificar palabra. $wrd \n\t Codificación: $res"
-[ $spc != $res ]&& echo "\e[31;1m ✗ $tst\e[0m: Codificar palabra. $wrd \n\t Codificación: $res"
+[ "$spc" = "$res" ]&& echo "\e[32;1m ✓ $tst\e[0m: Codificar oración: $wrd \n\t Codificación: $res"
+[ "$spc" != "$res" ]&& echo "\e[31;1m ✗ $tst\e[0m: Codificar oración: $wrd \n\t Codificación: $res"

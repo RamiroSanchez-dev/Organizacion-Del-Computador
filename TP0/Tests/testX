@@ -1,0 +1,12 @@
+#!/bin/bash
+tst="test07"
+
+dd if=/dev/zero of=output.dat  bs=1G  count=1
+cat output.dat | ./TP0 | ./TP0 -d -o output2.dat
+
+(($(diff -eq output.dat output2.dat > /dev/null 2>&1)) &&
+   echo "\e[32;1m ✓ $tst\e[0m: Se codifica y decodifican 8 Gigas de información. \n\tCoinciden") ||
+  (echo "\e[31;1m ✗ $tst\e[0m: Se codifica y decodifican 8 Gigas de información. \n\tNo coinciden")
+
+rm output.dat
+rm output2.dat

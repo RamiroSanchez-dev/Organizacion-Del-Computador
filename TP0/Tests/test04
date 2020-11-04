@@ -4,5 +4,5 @@ wrd="TWFtYnJ1IHNlIGZ1ZSBhIGxhIGd1ZXJyYQ=="
 spc="Mambru se fue a la guerra"
 res=$(echo -n $wrd | ./TP0 -d)
 
-[ "$spc" = "$res" ]&& echo "\e[32;1m ✓ $tst\e[0m: Decodificar palabra. $wrd \n\t Decodificación: $res"
-[ "$spc" != "$res" ]&& echo "\e[31;1m ✗ $tst\e[0m: Decodificar palabra. $wrd \n\t Decodificación: $res"
+[ "$spc" = "$res" ]&& echo "\e[32;1m ✓ $tst\e[0m: Decodificar oración. $wrd \n\t Decodificación: $res"
+[ "$spc" != "$res" ]&& echo "\e[31;1m ✗ $tst\e[0m: Decodificar oración. $wrd \n\t Decodificación: $res"

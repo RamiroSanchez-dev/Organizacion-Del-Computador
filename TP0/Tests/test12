@@ -1,0 +1,10 @@
+#!/bin/bash
+tst="test12"
+
+cat resources/binario | ./TP0 | ./TP0 -d -o binario2
+
+(($(diff -eq resources/binario binario2 > /dev/null 2>&1)) &&
+   echo "\e[32;1m ✓ $tst\e[0m: Se codifica y decodifica un archivo binario. \n\tCoinciden") ||
+  (echo "\e[31;1m ✗ $tst\e[0m: Se codifica y decodifica un archivo binario. \n\tNo coinciden")
+
+rm binario2
