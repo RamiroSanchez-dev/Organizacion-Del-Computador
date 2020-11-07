@@ -1,0 +1,1 @@
+m divu na.omit()
