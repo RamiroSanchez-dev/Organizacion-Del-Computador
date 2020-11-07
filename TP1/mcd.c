@@ -22,26 +22,73 @@ unsigned int mcm_c(unsigned int m, unsigned int n){
 
 }
 
+void mostrar_version(){
+	printf("Version 1.0.0\n");
+}
+
+void mostrar_ayudas(){
+	printf("\n");
+	printf("Usos:\n");
+	printf("./tp1 -h\n");
+	printf("./tp1 -v\n");
+	printf("./tp1 [opciones] M N\n");
+	printf("Opciones:\n");
+
+	printf("-h, --help: Muestra la interfaz de ayudas.\n");
+	printf("-v, --version: Indica la version del programa.\n");
+	printf("-m, --multiple: Imprime solo el mcm.\n");
+	printf("-d, --divisor: Imprime solo el mcd.\n");
+	printf("-o, --output: Indica la direccion donde esta el archivo a escribir.\n");
+	
+	
+}
+
 int main(){
-	unsigned int a,b,mincd,maxcm;
-	a=256;
-	b=192;
+	
+	static struct option long_options[] = {
+                   {"version", no_argument, 0, 'v'},
+                   {"help",no_argument, 0, 'h'},
+                   {"divisor",required_argument, 0, 'd'},
+                   {"output",required_argument, 0, 'o'},
+                   {"multiple", no_argument, 0, 'm'},
+                   {0,0,0,0}
+               };
 
-	mincd=mcd(a,b);
+	while((opt = getopt_long(argc, argv, "mo:dvh",long_options,NULL)) != -1) {
+		switch(opt){
+			case 'm':
+				strcpy(nombre_archivo_entrada, optarg);
+			break;
 
-	printf("El mcd es: %u\n",mincd);
+			case 'o':
+				strcpy(nombre_archivo_salida, optarg);
+			break;
 
-	mincd=mcd(b,a);
+			case 'd':
+				decode = true;
+			break;
 
-	printf("El mcd cuando damos los parametros al reves es: %u\n",mincd);
+			case 'h':
+				if(!pidio_info){
+					mostrar_ayudas();
+					pidio_info = true;
+				}
+			break;
 
-	maxcm=mcm_c(a,b);
+			case 'v':
+				if(!pidio_info){
+					pidio_info = true;
+					mostrar_version();
+				}
+			break;
 
-	printf("El mcm es: %u\n",maxcm);
+			default:
+			break;
+		}
+	}
 
-	maxcm=mcm_c(b,a);
-
-	printf("El mcm cuando damos los parametros al reves es: %u\n",maxcm);
+	if(pidio_info)
+		return 0;
 
 	return 0;
 }
