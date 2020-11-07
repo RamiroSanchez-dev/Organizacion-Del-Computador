@@ -1,6 +1,7 @@
 #include <stdio.h>
+extern unsigned int mcd(unsigned int m, unsigned int n);
 
-unsigned int mcd(unsigned int m, unsigned int n){
+unsigned int mcd_c(unsigned int m, unsigned int n){
 	//FALTA EN CASO DE ERRORES (fuera de rango)
 	unsigned int resto;
 	if(m<n){
@@ -16,7 +17,7 @@ unsigned int mcd(unsigned int m, unsigned int n){
 	return m;
 }
 
-unsigned int mcm(unsigned int m, unsigned int n){
+unsigned int mcm_c(unsigned int m, unsigned int n){
 	return ((m*n)/mcd(m,n));
 
 }
@@ -34,11 +35,11 @@ int main(){
 
 	printf("El mcd cuando damos los parametros al reves es: %u\n",mincd);
 
-	maxcm=mcm(a,b);
+	maxcm=mcm_c(a,b);
 
 	printf("El mcm es: %u\n",maxcm);
 
-	maxcm=mcm(b,a);
+	maxcm=mcm_c(b,a);
 
 	printf("El mcm cuando damos los parametros al reves es: %u\n",maxcm);
 

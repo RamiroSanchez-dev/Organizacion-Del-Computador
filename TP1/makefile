@@ -5,4 +5,4 @@ FLAGS = -Wall -Werror -Wconversion -std=c99 -g -O0
 
 #	./pruebas
 tp1:
-	gcc $(FLAGS) mcd.c -o mcd
+	gcc $(FLAGS) mcd.c mcd.S -o mcd
