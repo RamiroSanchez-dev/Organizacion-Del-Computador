@@ -13,9 +13,9 @@ extern int optind, opterr, optopt;
 
 
 
-//extern unsigned int mcd(unsigned int m, unsigned int n);
+extern unsigned int mcd(unsigned int m, unsigned int n);
 
-
+extern unsigned int mcm(unsigned int m, unsigned int n);
 
 #define MAXIMO_ARCHIVO 100
 
@@ -141,11 +141,11 @@ int main(int argc, char** argv){
 			break;
 
 			case 'm':
-				divisor = true;
+				multiple = true;
 			break;
 
 			case 'd':
-				multiple = true;
+				divisor = true;
 			break;
 
 			case 'h':
@@ -182,12 +182,12 @@ int main(int argc, char** argv){
 	}
 	
 	if(divisor){
-		unsigned int res = mcd_c(m, n);
+		unsigned int res = mcd(m, n);
 		printf("%u\n", res);
 	}
 
 	if(multiple){
-		unsigned int res = mcm_c(m, n);
+		unsigned int res = mcm(m, n);
 		printf("%u\n", res);
 	}
 

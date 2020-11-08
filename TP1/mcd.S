@@ -1,9 +1,8 @@
+#ifndef MCD_S
+#define MCD_S
+
 #include <sys/regdef.h>
 #define SS 8
-
-/* Caller's ABA */
-#define O_A0 (SS)
-#define O_A1 (SS + 4)
 
 /* SRA */
 #define O_FP 4
@@ -24,9 +23,6 @@ mcd:
 	sw   fp, O_FP(sp)
  	sw   gp, O_GP(sp)
  	move fp, sp
-	
-	sw   a0, O_A0(fp)
- 	sw   a1, O_A1(fp)
 	
 	bgtu a0,a1,while
 /*hacemos el swap */
@@ -51,3 +47,5 @@ return:
 	
 	jr ra
 .end mcd
+
+#endif /* MCD_S */
