@@ -25,7 +25,6 @@ extern unsigned int mcm(unsigned int m, unsigned int n);
 
 
 unsigned int mcd_c(unsigned int m, unsigned int n){
-	//FALTA EN CASO DE ERRORES (fuera de rango)
 	unsigned int resto;
 	if(m<n){
 		unsigned int aux=m;
@@ -41,7 +40,14 @@ unsigned int mcd_c(unsigned int m, unsigned int n){
 }
 
 unsigned int mcm_c(unsigned int m, unsigned int n){
-	return ((m*n)/mcd_c(m,n));
+	unsigned int multiplicacion = m*n;
+	if (m != 0 && multiplicacion / m != n) { //Es porque hubo overflow.
+    fprintf(stderr, "Hubo overflow en la multiplicacion entre %u y %u\n",m,n);
+    return 0;
+	}
+	else 
+		return (multiplicacion/mcd_c(m,n));
+
 }
 
 void mostrar_version(){
@@ -50,11 +56,6 @@ void mostrar_version(){
 
 void mostrar_ayudas(){
 	printf("\n");
-	printf("Usos:\n");
-	printf("./tp1 -h\n");
-	printf("./tp1 -v\n");
-	printf("./tp1 [opciones] M N\n");
-	printf("Opciones:\n");
 
 	printf("-h, --help: Muestra la interfaz de ayudas.\n");
 	printf("-v, --version: Indica la version del programa.\n");
@@ -62,14 +63,25 @@ void mostrar_ayudas(){
 	printf("-d, --divisor: Imprime solo el mcd.\n");
 	printf("-o, --output: Indica la direccion donde esta el archivo a escribir.\n");
 	
+	printf("\n");
+
+	printf("Modo de uso:\n");
+	printf("Los dos numeros a operar DEBEN ser introducidos inmediatamente despues de la direccion especificada en -o\n");
+	printf("Se usa '-' como argumento de -o para pedir la salida por stdout.\n");
+	printf("El resto de los flags pueden ir en cualquier orden.\n");
+	printf("Ejemplo: ./tp1 -o - 256 192\n");
+	printf("Obtiene como salida:\n64\n768\n");
+
+	printf("\n");
 	
+	printf("Al calcular el mcm, en caso de overflow se devuelve 0 y se manda un mensaje a stderr.\n");
 }
 
 unsigned int leer_uint(char* string){
 	long resultado = strtol(string, NULL, 10);
 	if(resultado > UINT_MAX || errno == ERANGE || resultado <= 1){
-		printf("Che flaco patinaste...\n");// TODO: Escribir por stderr
-		printf("Abortamos\n");
+		fprintf(stderr,"Los numeros ingresados no se encuentran en el rango permitido.\n");
+		fprintf(stderr,"Abortando operacion...\n");
 		return ERROR;
 	}
 	return (unsigned int) resultado;
@@ -84,7 +96,7 @@ int main(int argc, char** argv){
 	bool escribio_numeros = false;
 	unsigned int m;
 	unsigned int n;
-	//FILE *fsalida;
+	FILE *fsalida=NULL;
 	char nombre_archivo_salida[MAXIMO_ARCHIVO] = "";
 	int opt;
 	static struct option long_options[] = {
@@ -97,10 +109,9 @@ int main(int argc, char** argv){
 	};
 
 
-	if(argc == 1 || argc == 2){
-		printf("No se reconoce la entrada\n");
+	if(argc == 1 /* || argc == 2 */){
 		mostrar_ayudas();
-		return 0;	
+		pidio_info=true;	
 	}
 
 	if(argc == 3){
@@ -120,9 +131,17 @@ int main(int argc, char** argv){
 
 			case 'o':
 				strcpy(nombre_archivo_salida, optarg);
+				if(*nombre_archivo_salida=='-')
+					fsalida = stdout;
+				else
+					fsalida = fopen(nombre_archivo_salida, "w");
+				if(!fsalida){
+					fprintf(stderr,"No se logro abrir el archivo %s.\n",nombre_archivo_salida);
+					return -1;
+				}
 
 				if(optind > argc - 2){
-					printf("Abortamos xq escribiste cualquiera\n"); // TODO: Cambiar
+					fprintf(stderr,"Error en la cantidad de numeros ingresados.\n");
 					mostrar_ayudas();
 					return -1;
 				}
@@ -167,13 +186,13 @@ int main(int argc, char** argv){
 		}
 	}
 
-	if(!escribio_numeros){
-		printf("Te faltó escribir los numeritos\n");
-		return -1;
-	}
-
 	if(pidio_info)
 		return 0;
+
+	if(!escribio_numeros){
+		fprintf(stderr,"Faltan escribir los numeros.\n");
+		return -1;
+	}
 
 
 	if(!multiple && !divisor){
@@ -182,16 +201,16 @@ int main(int argc, char** argv){
 	}
 	
 	if(divisor){
-		unsigned int res = mcd(m, n);
-		printf("%u\n", res);
+		unsigned int res = mcd_c(m, n);
+		fprintf(fsalida,"%u\n", res);
 	}
 
 	if(multiple){
-		unsigned int res = mcm(m, n);
-		printf("%u\n", res);
+		unsigned int res = mcm_c(m, n);
+		fprintf(fsalida,"%u\n", res);
 	}
 
-	printf("%s\n", nombre_archivo_salida);
+	fclose(fsalida);
 
 	return 0;
 }
