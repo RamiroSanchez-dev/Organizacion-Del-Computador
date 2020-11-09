@@ -1,0 +1,10 @@
+Antes de ejecutar los test compile el programa con el makefile en el directorio previo y traiga el archivo ejecutable a este directorio y con sh ejecute las pruebas.
+
+> sh nombreTest
+	Para ejecutar un test en particular.
+
+ó
+
+> sh tests
+	Para ejecutar todos los test. [Exceptuando el X]
+

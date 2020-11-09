@@ -1,0 +1,13 @@
+#!/bin/bash
+tst="test04"
+val="7"
+val2="13"
+spc="1 91"
+./tp1 -o - $val $val2 > RES1
+./tp1 -o - $val2 $val > RES2
+
+
+[ "$spc" = "$(awk 'BEGIN{FS="\n"; RS = ""} { print $1,$2 }' RES1)" ]&& [ "$spc" = "$(awk 'BEGIN{FS="\n"; RS = ""} { print $1,$2 }' RES2)" ]&& echo "\e[32;1m ✓ $tst\e[0m: El resultado para MCD y MCM de $val y $val2 fue $(awk 'BEGIN{FS="\n"; RS = ""} { print $1,$2 }' RES2)"
+[ "$spc" != "$(awk 'BEGIN{FS="\n"; RS = ""} { print $1,$2 }' RES1)" ]|| [ "$spc" != "$(awk 'BEGIN{FS="\n"; RS = ""} { print $1,$2 }' RES2)" ]&& echo "\e[31;1m ✗ $tst\e[0m: El resultado para MCD y MCM de $val y $val2 fue $(awk 'BEGIN{FS="\n"; RS = ""} { print $1,$2 }' RES2) en vez $spc"
+rm RES1
+rm RES2

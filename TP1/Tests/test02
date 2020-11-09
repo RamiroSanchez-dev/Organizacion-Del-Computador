@@ -1,0 +1,11 @@
+#!/bin/bash
+tst="test02"
+val="256"
+val2="192"
+spc="768"
+res=$(./tp1 -m -o - $val $val2)
+res2=$(./tp1 -m -o - $val2 $val)
+
+
+[ $spc = $res ]&& [ $spc = $res2 ]&& echo "\e[32;1m ✓ $tst\e[0m: El MCM de $val y $val2 fue $res"
+[ $spc != $res ]|| [ $spc != $res2 ]&& echo "\e[31;1m ✗ $tst\e[0m: El MCM de $val y $val2 fue $res en vez $spc"
