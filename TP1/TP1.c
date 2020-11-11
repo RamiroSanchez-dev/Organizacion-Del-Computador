@@ -12,46 +12,23 @@ extern char *optarg;
 extern int optind, opterr, optopt;
 
 
-
+/* 
+ * Si se compiló con common.h serán los de C [Portables].
+ * Si se compiló con mcd.S y mcm.S serán los de MIPS32.
+ */
 extern unsigned int mcd(unsigned int m, unsigned int n);
 
 extern unsigned int mcm(unsigned int m, unsigned int n);
 
+
 #define MAXIMO_ARCHIVO 100
+#define ERROR_LEC_INT 1
+#define ERROR_LECTURA -1
+const char VERSION[] = "1.0.1";
 
-#define ERROR 1
-
-
-
-
-unsigned int mcd_c(unsigned int m, unsigned int n){
-	unsigned int resto;
-	if(m<n){
-		unsigned int aux=m;
-		m=n;
-		n=aux;
-	}
-	while(n!=0){
-		resto=m%n;
-		m=n;
-		n=resto;
-	}
-	return m;
-}
-
-unsigned int mcm_c(unsigned int m, unsigned int n){
-	unsigned int multiplicacion = m*n;
-	if (m != 0 && multiplicacion / m != n) { //Es porque hubo overflow.
-    fprintf(stderr, "Hubo overflow en la multiplicacion entre %u y %u\n",m,n);
-    return 0;
-	}
-	else 
-		return (multiplicacion/mcd_c(m,n));
-
-}
 
 void mostrar_version(){
-	printf("Version 1.0.0\n");
+	printf("Version %s\n", VERSION);
 }
 
 void mostrar_ayudas(){
@@ -80,24 +57,26 @@ void mostrar_ayudas(){
 unsigned int leer_uint(char* string){
 	long resultado = strtol(string, NULL, 10);
 	if(resultado > UINT_MAX || errno == ERANGE || resultado <= 1){
-		fprintf(stderr,"Los numeros ingresados no se encuentran en el rango permitido o no son numeros.\n");
-		return ERROR;
+		return ERROR_LEC_INT;
 	}
 	return (unsigned int) resultado;
 }
 
-int main(int argc, char** argv){
-	
 
-	bool divisor = false;
-	bool multiple = false;
-	bool pidio_info = false;
-	bool pidio_ayuda = false;
-	bool escribio_numeros = false;
-	unsigned int m;
-	unsigned int n;
-	FILE *fsalida= stdout;
-	char nombre_archivo_salida[MAXIMO_ARCHIVO] = "";
+
+/*
+ * Lee la entrada y escribe los argumentos en las variables pasadas por parámetro.
+ * Devuelve la cantidad de argumentos leidos.
+ * En caso de un error devuelve (-1).
+ */
+int leer_entrada(int argc, char** argv, unsigned int *m, unsigned int* n, char nombre_archivo_salida[MAXIMO_ARCHIVO], bool* divisor, bool* multiple, bool* pidio_info, bool* pidio_ayuda, bool* escribio_numeros){
+	
+	if(argc == 1 ){
+		
+		fprintf(stderr,"Insuficiente información: Ingrese los argumentos. Consulta las ayudas con ./tp1 -h\n");
+		return ERROR_LECTURA;
+	}
+
 	int opt;
 	static struct option long_options[] = {
 		{"version", no_argument, 0, 'v'},
@@ -108,23 +87,17 @@ int main(int argc, char** argv){
 		{0,0,0,0}
 	};
 
-
-	if(argc == 1 ){
-		
-		fprintf(stderr,"Error en los argumentos ingresados. Consulta las ayudas con ./tp1 -h\n");
-		return -1;	
-	}
-	/*
+	/* <<<<<<<<<<<<<<<<<< TODO >>> TODO <<< TODO >>> TODO <<< TODO >>>>>>>>>>>>>>>>>>
 	if(argc == 3){
-		m = leer_uint(argv[1]);
-		if(m == ERROR){
+		*m = leer_uint(argv[1]);
+		if(m == ERROR_LEC_INT){
 			return -1;
 		}
-		n = leer_uint(argv[2]);
-		if(n == ERROR){
+		*n = leer_uint(argv[2]);
+		if(n == ERROR_LEC_INT){
 			return -1;
 		}
-		escribio_numeros = true;
+		*escribio_numeros = true;
 	}*/
 	int argumentos_leidos = 0;
 	
@@ -135,78 +108,116 @@ int main(int argc, char** argv){
 			case 'o':
 				strcpy(nombre_archivo_salida, optarg);
 				if(optind > argc - 2){
-					fprintf(stderr,"Error en los argumentos ingresados. Consulta las ayudas con ./tp1 -h\n");
-					return -1;
+					fprintf(stderr,"Error en los argumentos: Insuficiente información. Consulta las ayudas con ./tp1 -h\n");
+					return ERROR_LECTURA;
 				}
 
-				m = leer_uint(argv[optind]);
-				if(m == ERROR){
-					return -1;
+				*m = leer_uint(argv[optind]);
+				if(*m == ERROR_LEC_INT){
+					fprintf(stderr,"El parámetro ingresado: (%s) no es válido.\n",argv[optind]);
+					return ERROR_LECTURA;
 				}
 
-				n = leer_uint(argv[optind + 1]);
-				if(n == ERROR){
-					return -1;
+				*n = leer_uint(argv[optind + 1]);
+				if(*n == ERROR_LEC_INT){
+					fprintf(stderr,"El parámetro ingresado: (%s) no es válido.\n",argv[optind + 1]);
+					return ERROR_LECTURA;
 				}
-				if(*nombre_archivo_salida !='-')
-					fsalida = fopen(nombre_archivo_salida, "w");
-				if(!fsalida){
-					fprintf(stderr,"No se logro abrir el archivo %s.\n",nombre_archivo_salida);
-					return -1;
-				}
-				escribio_numeros = true;
+
+				*escribio_numeros = true;
 				argumentos_leidos += 3; 
 			break;
 
 			case 'm':
-				multiple = true;
+				*multiple = true;
 			break;
 
 			case 'd':
-				divisor = true;
+				*divisor = true;
 			break;
 
 			case 'h':
-				if(!pidio_ayuda){
-					mostrar_ayudas();
-					pidio_ayuda = true;
-				}
+				*pidio_ayuda = true;
 			break;
 
 			case 'v':
-				if(!pidio_info){
-					pidio_info = true;
-					mostrar_version();
-				}
+				*pidio_info = true;
 			break;
 		}
 	}
-	
-	if(pidio_info || pidio_ayuda)
-		return 0;
 
-	if(!escribio_numeros || argumentos_leidos < (argc -1)){
-		fprintf(stderr,"Error en los argumentos ingresados. Consulta las ayudas con ./tp1 -h\n");
-		return -1;
-	}
+	return argumentos_leidos;
+}
 
 
+void mostrar_common(bool multiple, bool divisor, unsigned int m, unsigned int n, FILE* fsalida){
 	if(!multiple && !divisor){
 		multiple = true;
 		divisor = true;
 	}
 	
 	if(divisor){
-		unsigned int res = mcd_c(m, n);
+		unsigned int res = mcd(m, n);
 		fprintf(fsalida,"%u\n", res);
 	}
 
 	if(multiple){
-		unsigned int res = mcm_c(m, n);
+		unsigned int res = mcm(m, n);
 		fprintf(fsalida,"%u\n", res);
 	}
+}
 
-	fclose(fsalida);
+int main(int argc, char** argv){
+	
+
+	bool divisor = false;
+	bool multiple = false;
+	bool pidio_info = false;
+	bool pidio_ayuda = false;
+	bool escribio_numeros = false;
+	
+	unsigned int m;
+	unsigned int n;
+
+	FILE *fsalida = stdout;
+	char nombre_archivo_salida[MAXIMO_ARCHIVO] = "";
+
+
+	int cantidad_argumentos_leidos = leer_entrada(argc, argv, &m, &n, nombre_archivo_salida,
+										 &divisor, &multiple, &pidio_info, &pidio_ayuda,
+										 &escribio_numeros);
+
+	if(cantidad_argumentos_leidos == ERROR_LECTURA){
+		return ERROR_LECTURA;
+	}
+
+	if(pidio_ayuda){
+		mostrar_ayudas();
+		return 0;
+	}
+
+	if(pidio_info){
+		mostrar_version();
+		return 0;
+	}
+
+	if(!escribio_numeros || cantidad_argumentos_leidos < (argc -1)){
+		fprintf(stderr,"Error en los argumentos ingresados. Consulta las ayudas con ./tp1 -h\n");
+		return ERROR_LECTURA;
+	}
+
+	if(*nombre_archivo_salida != '-'){
+		fsalida = fopen(nombre_archivo_salida, "w");
+		if(!fsalida){
+			fprintf(stderr,"No se logro abrir el archivo: (%s).\n", nombre_archivo_salida);
+			return ERROR_LECTURA;
+		}
+	}
+
+	mostrar_common(multiple, divisor, m, n, fsalida);
+	
+	if(*nombre_archivo_salida !='-')
+		fclose(fsalida);
 
 	return 0;
 }

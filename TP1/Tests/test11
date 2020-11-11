@@ -1,9 +1,9 @@
 #!/bin/bash
-tst="test10"
+tst="test11"
 val1="0"
 val2="4"
 
-spc="Los numeros ingresados no se encuentran en el rango permitido o no son numeros."
+spc="El parámetro ingresado: (0) no es válido."
 ./tp1 -o - $val1 $val2 2> RES1 
 
 
