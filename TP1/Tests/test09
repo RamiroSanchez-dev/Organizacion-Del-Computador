@@ -1,0 +1,14 @@
+#!/bin/bash
+tst="test09"
+val1="4000000000"
+val2="4000000000"
+
+spc="Hubo overflow en la multiplicacion entre $val1 y $val2"
+./tp1 -m -o - $val1 $val2 2> RES1 1>RES2
+
+
+
+[ "$spc" = "$(awk 'BEGIN{FS="\n"; RS = ""} { print $1 }' RES1)" ]&& echo "\e[32;1m ✓ $tst\e[0m: Al ejecutar el programa con numeros cuya multiplicacion nos da Overflow en el MCM nos dio: $(awk 'BEGIN{FS="\n"; RS = ""} { print $0 }' RES1)"
+[ "$spc" != "$(awk 'BEGIN{FS="\n"; RS = ""} { print $1 }' RES1)" ]&& echo "\e[31;1m ✗ $tst\e[0m: Al ejecutar el programa con numeros cuya multiplicacion nos da Overflow en el MCM no nos dio error, en vez de eso nos dio: $(awk 'BEGIN{FS="\n"; RS = ""} { print $1 }' RES1) en vez $spc"
+rm RES1
+rm RES2

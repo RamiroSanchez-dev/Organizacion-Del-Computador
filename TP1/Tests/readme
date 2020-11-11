@@ -6,5 +6,5 @@ Antes de ejecutar los test compile el programa con el makefile en el directorio 
 ó
 
 > sh tests
-	Para ejecutar todos los test. [Exceptuando el X]
+	Para ejecutar todos los test.
 

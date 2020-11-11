@@ -80,8 +80,7 @@ void mostrar_ayudas(){
 unsigned int leer_uint(char* string){
 	long resultado = strtol(string, NULL, 10);
 	if(resultado > UINT_MAX || errno == ERANGE || resultado <= 1){
-		fprintf(stderr,"Los numeros ingresados no se encuentran en el rango permitido.\n");
-		fprintf(stderr,"Abortando operacion...\n");
+		fprintf(stderr,"Los numeros ingresados no se encuentran en el rango permitido o no son numeros.\n");
 		return ERROR;
 	}
 	return (unsigned int) resultado;
@@ -93,10 +92,11 @@ int main(int argc, char** argv){
 	bool divisor = false;
 	bool multiple = false;
 	bool pidio_info = false;
+	bool pidio_ayuda = false;
 	bool escribio_numeros = false;
 	unsigned int m;
 	unsigned int n;
-	FILE *fsalida=NULL;
+	FILE *fsalida= stdout;
 	char nombre_archivo_salida[MAXIMO_ARCHIVO] = "";
 	int opt;
 	static struct option long_options[] = {
@@ -109,11 +109,12 @@ int main(int argc, char** argv){
 	};
 
 
-	if(argc == 1 /* || argc == 2 */){
-		mostrar_ayudas();
-		pidio_info=true;	
+	if(argc == 1 ){
+		
+		fprintf(stderr,"Error en los argumentos ingresados. Consulta las ayudas con ./tp1 -h\n");
+		return -1;	
 	}
-
+	/*
 	if(argc == 3){
 		m = leer_uint(argv[1]);
 		if(m == ERROR){
@@ -124,25 +125,17 @@ int main(int argc, char** argv){
 			return -1;
 		}
 		escribio_numeros = true;
-	}
-
-	while((opt = getopt_long(argc, argv, "o:mdvh",long_options,NULL)) != -1) {
+	}*/
+	int argumentos_leidos = 0;
+	
+	while((opt = getopt_long(argc, argv, "o:mdvh",long_options,NULL)) != -1 ) {
+		argumentos_leidos++;
 		switch(opt){
 
 			case 'o':
 				strcpy(nombre_archivo_salida, optarg);
-				if(*nombre_archivo_salida=='-')
-					fsalida = stdout;
-				else
-					fsalida = fopen(nombre_archivo_salida, "w");
-				if(!fsalida){
-					fprintf(stderr,"No se logro abrir el archivo %s.\n",nombre_archivo_salida);
-					return -1;
-				}
-
 				if(optind > argc - 2){
-					fprintf(stderr,"Error en la cantidad de numeros ingresados.\n");
-					mostrar_ayudas();
+					fprintf(stderr,"Error en los argumentos ingresados. Consulta las ayudas con ./tp1 -h\n");
 					return -1;
 				}
 
@@ -155,8 +148,14 @@ int main(int argc, char** argv){
 				if(n == ERROR){
 					return -1;
 				}
+				if(*nombre_archivo_salida !='-')
+					fsalida = fopen(nombre_archivo_salida, "w");
+				if(!fsalida){
+					fprintf(stderr,"No se logro abrir el archivo %s.\n",nombre_archivo_salida);
+					return -1;
+				}
 				escribio_numeros = true;
-
+				argumentos_leidos += 3; 
 			break;
 
 			case 'm':
@@ -168,9 +167,9 @@ int main(int argc, char** argv){
 			break;
 
 			case 'h':
-				if(!pidio_info){
+				if(!pidio_ayuda){
 					mostrar_ayudas();
-					pidio_info = true;
+					pidio_ayuda = true;
 				}
 			break;
 
@@ -180,17 +179,14 @@ int main(int argc, char** argv){
 					mostrar_version();
 				}
 			break;
-
-			default:
-			break;
 		}
 	}
-
-	if(pidio_info)
+	
+	if(pidio_info || pidio_ayuda)
 		return 0;
 
-	if(!escribio_numeros){
-		fprintf(stderr,"Faltan escribir los numeros.\n");
+	if(!escribio_numeros || argumentos_leidos < (argc -1)){
+		fprintf(stderr,"Error en los argumentos ingresados. Consulta las ayudas con ./tp1 -h\n");
 		return -1;
 	}
 

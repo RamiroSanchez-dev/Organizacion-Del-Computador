@@ -10,3 +10,4 @@ res2=$(./tp1 -d -o - $val2 $val)
 [ $spc = $res ]&& [ $spc = $res2 ]&& echo "\e[32;1m ✓ $tst\e[0m: El MCD de $val y $val2 fue $res"
 [ $spc != $res ]|| [ $spc != $res2 ]&& echo "\e[31;1m ✗ $tst\e[0m: El MCD de $val y $val2 fue $res en vez $spc"
 
+#DOS NUMEROS NORMALES PARA MCD 
