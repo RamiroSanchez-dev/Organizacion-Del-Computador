@@ -41,9 +41,13 @@ mcm:
 	// Guardar Padding????
 	move  fp, sp
 
-	mul   s0, a0, a1
-	sw    s0, O_S0_MCM(fp)
+	multu a0, a1				// acc64 = a0·a1
+	mfhi  t0					// Traigo la parte alta de acc64.
+	bnez  t0, return0 			// Si no es 0 hubo overflow: devuelvo 0.
 
+	mflo  s0					// Traigo la parte baja de acc64 a s0.
+
+	sw    s0, O_S0_MCM(fp)
 	bal   mcd
 
 	ld    s0, O_S0_MCM(fp)
@@ -56,6 +60,16 @@ mcm:
   	addiu sp, sp, SS_MCM
 
 	jr ra
-.end mcm	
+return0:
+	move  v0, zero
+	/* Stack unwiding */
+	lw    ra, O_RA(sp)
+	lw    fp, O_FP(sp)
+  	lw    gp, O_GP(sp)
+  	addiu sp, sp, SS_MCM
+
+	jr ra
+
+.end mcm
 	 
 #endif /* MCM_S */

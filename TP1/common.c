@@ -20,7 +20,6 @@ unsigned int mcd(unsigned int m, unsigned int n){
 unsigned int mcm(unsigned int m, unsigned int n){
 	unsigned int multiplicacion = m*n;
 	if (m != 0 && multiplicacion / m != n) { //Es porque hubo overflow.
-		fprintf(stderr, "Hubo overflow en la multiplicacion entre %u y %u\n",m,n);
 		return 0;
 	}
 	else 

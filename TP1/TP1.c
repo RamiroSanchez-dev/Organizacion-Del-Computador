@@ -167,7 +167,10 @@ void mostrar_common(bool multiple, bool divisor, unsigned int m, unsigned int n,
 
 	if(multiple){
 		unsigned int res = mcm(m, n);
-		fprintf(fsalida,"%u\n", res);
+		if(res == 0)
+			fprintf(stderr, "Hubo overflow en la multiplicacion entre %u y %u\n",m,n);
+		else
+			fprintf(fsalida,"%u\n", res);
 	}
 }
 
