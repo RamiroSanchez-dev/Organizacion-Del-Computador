@@ -1,7 +1,7 @@
 #!/bin/bash
 tst="test09"
-val1="4000000000"
-val2="4000000000"
+val1="4000000"
+val2="4000000"
 
 spc="Hubo overflow en la multiplicacion entre $val1 y $val2"
 ./tp1 -m -o - $val1 $val2 2> RES1 1>RES2
