@@ -46,12 +46,16 @@ void mostrar_ayudas(){
 	printf("Los dos numeros a operar DEBEN ser introducidos inmediatamente despues de la direccion especificada en -o\n");
 	printf("Se usa '-' como argumento de -o para pedir la salida por stdout.\n");
 	printf("El resto de los flags pueden ir en cualquier orden.\n");
-	printf("Ejemplo: ./tp1 -o - 256 192\n");
-	printf("Obtiene como salida:\n64\n768\n");
-
 	printf("\n");
-	
-	printf("Al calcular el mcm, en caso de overflow se devuelve 0 y se manda un mensaje a stderr.\n");
+	printf("Ejemplo:\n\t> ./tp1 -o - 256 192\n");
+	printf("\t64\n\t768\n");
+	printf("\n");
+	printf("Otro ejemplo:\n\t> ./tp1 -o a.out 256 192 -d\n");
+	printf("\t> cat a.out\n");
+	printf("\t64\n");
+	printf("\n");
+
+	printf("Al calcular el mcm, en caso de overflow se devuelve 0 y se escribe en stderr el error.\n");
 }
 
 unsigned int leer_uint(char* string){
