@@ -91,18 +91,6 @@ int leer_entrada(int argc, char** argv, unsigned int *m, unsigned int* n, char n
 		{0,0,0,0}
 	};
 
-	/* <<<<<<<<<<<<<<<<<< TODO >>> TODO <<< TODO >>> TODO <<< TODO >>>>>>>>>>>>>>>>>>
-	if(argc == 3){
-		*m = leer_uint(argv[1]);
-		if(m == ERROR_LEC_INT){
-			return -1;
-		}
-		*n = leer_uint(argv[2]);
-		if(n == ERROR_LEC_INT){
-			return -1;
-		}
-		*escribio_numeros = true;
-	}*/
 	int argumentos_leidos = 0;
 	
 	while((opt = getopt_long(argc, argv, "o:mdvh",long_options,NULL)) != -1 ) {
@@ -149,7 +137,19 @@ int leer_entrada(int argc, char** argv, unsigned int *m, unsigned int* n, char n
 			break;
 		}
 	}
-
+	
+	if( (argc == 3) && (argumentos_leidos == 0) ){
+		*m = leer_uint(argv[1]);
+		if(m == ERROR_LEC_INT){
+			return -1;
+		}
+		*n = leer_uint(argv[2]);
+		if(n == ERROR_LEC_INT){
+			return -1;
+		}
+		*escribio_numeros = true;
+	}
+	
 	return argumentos_leidos;
 }
 
