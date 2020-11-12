@@ -34,11 +34,11 @@ void mostrar_version(){
 void mostrar_ayudas(){
 	printf("\n");
 
-	printf("-h, --help: Muestra la interfaz de ayudas.\n");
-	printf("-v, --version: Indica la version del programa.\n");
-	printf("-m, --multiple: Imprime solo el mcm.\n");
-	printf("-d, --divisor: Imprime solo el mcd.\n");
-	printf("-o, --output: Indica la direccion donde esta el archivo a escribir.\n");
+	printf("-h, --help:\t\tMuestra la interfaz de ayudas.\n");
+	printf("-v, --version:\t\tIndica la version del programa.\n");
+	printf("-m, --multiple:\t\tImprime solo el mcm.\n");
+	printf("-d, --divisor:\t\tImprime solo el mcd.\n");
+	printf("-o, --output:\t\tIndica la direccion donde esta el archivo a escribir.\n");
 	
 	printf("\n");
 

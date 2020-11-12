@@ -5,29 +5,31 @@
 
 .extern mcd
 
+
+
+
 #define SS_MCM 40
-
-
 
 /* Callers ABA */
 #define O_A0_CALLER SS_MCM
 #define O_A1_CALLER SS_MCM + 4
 
-
 /* SRA */
-//#4B_PARA_COMPLETAR 36
-//#O_PADDING 32
-#define O_S0_MCM 28
-#define O_RA 24
-#define O_FP 20
-#define O_GP 16
+//#O_PADDING 36
+#define O_RA 32
+#define O_FP 28
+#define O_GP 24
+
+/* LTA */
+//#define OtraTemp 20
+#define O_MUL 16
 
 // Se llama a una función, por ende:
 /* ABA */
-#define O_A0_MCM 0
-#define O_A1_MCM 4
-#define O_A2_MCM 8
 #define O_A3_MCM 12
+#define O_A2_MCM 8
+#define O_A1_MCM 4
+#define O_A0_MCM 0
 
 .text 
 .align 2
@@ -56,13 +58,13 @@ mcm:
 	mfhi  t0					// Traigo la parte alta de acc64.
 	bnez  t0, return0			// Si no es 0 hubo overflow: devuelvo 0.
 
-	mflo  s0					// Traigo la parte baja de acc64 a s0.
+	mflo  t0					// Traigo la parte baja de acc64 a t0.
 
-	sw    s0, O_S0_MCM(fp)
-	bal   mcd
+	sw    t0, O_MUL(fp)
+	bal   mcd					// v0 = mcd(a0, a1)
 
-	ld    s0, O_S0_MCM(fp)
-	divu  s0, v0
+	ld    t0, O_MUL(fp)
+	divu  t0, v0				// acc = a0·a1/mcd(a0, a1)
 	mflo  v0
 	/* Stack unwiding */
 	lw    ra, O_RA(sp)

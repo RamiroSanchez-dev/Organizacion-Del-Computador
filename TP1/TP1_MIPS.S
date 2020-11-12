@@ -1215,13 +1215,13 @@ mcm:
 	subu  sp, sp, SS_MCM
     17c0:	27bdffd8 	addiu	sp,sp,-40
 	.cprestore O_GP
-    17c4:	afbc0010 	sw	gp,16(sp)
+    17c4:	afbc0018 	sw	gp,24(sp)
 	sw    fp, O_FP(sp)
-    17c8:	afbe0014 	sw	s8,20(sp)
+    17c8:	afbe001c 	sw	s8,28(sp)
 	sw    gp, O_GP(sp)
-    17cc:	afbc0010 	sw	gp,16(sp)
+    17cc:	afbc0018 	sw	gp,24(sp)
 	sw    ra, O_RA(sp)
-    17d0:	afbf0018 	sw	ra,24(sp)
+    17d0:	afbf0020 	sw	ra,32(sp)
 	move  fp, sp
     17d4:	03a0f025 	move	s8,sp
 
@@ -1239,32 +1239,32 @@ mcm:
     17e8:	15000012 	bnez	t0,1834 <return0>
     17ec:	00000000 	nop
 
-	mflo  s0					// Traigo la parte baja de acc64 a s0.
-    17f0:	00008012 	mflo	s0
+	mflo  t0					// Traigo la parte baja de acc64 a t0.
+    17f0:	00004012 	mflo	t0
 
-	sw    s0, O_S0_MCM(fp)
-    17f4:	afd0001c 	sw	s0,28(s8)
-	bal   mcd
+	sw    t0, O_MUL(fp)
+    17f4:	afc80010 	sw	t0,16(s8)
+	bal   mcd					// v0 = mcd(a0, a1)
     17f8:	0411ffd5 	bal	1750 <mcd>
     17fc:	00000000 	nop
 
-	ld    s0, O_S0_MCM(fp)
-    1800:	8fd0001c 	lw	s0,28(s8)
-    1804:	8fd10020 	lw	s1,32(s8)
-	divu  s0, v0
+	ld    t0, O_MUL(fp)
+    1800:	8fc80010 	lw	t0,16(s8)
+    1804:	8fc90014 	lw	t1,20(s8)
+	divu  t0, v0				// acc = a0·a1/mcd(a0, a1)
     1808:	14400002 	bnez	v0,1814 <mcm+0x54>
-    180c:	0202001b 	divu	zero,s0,v0
+    180c:	0102001b 	divu	zero,t0,v0
     1810:	0007000d 	break	0x7
-    1814:	00008012 	mflo	s0
+    1814:	00004012 	mflo	t0
 	mflo  v0
     1818:	00001012 	mflo	v0
 	/* Stack unwiding */
 	lw    ra, O_RA(sp)
-    181c:	8fbf0018 	lw	ra,24(sp)
+    181c:	8fbf0020 	lw	ra,32(sp)
 	lw    fp, O_FP(sp)
-    1820:	8fbe0014 	lw	s8,20(sp)
+    1820:	8fbe001c 	lw	s8,28(sp)
 	lw    gp, O_GP(sp)
-    1824:	8fbc0010 	lw	gp,16(sp)
+    1824:	8fbc0018 	lw	gp,24(sp)
 	addiu sp, sp, SS_MCM
     1828:	27bd0028 	addiu	sp,sp,40
 
@@ -1278,11 +1278,11 @@ return0:
     1834:	00001025 	move	v0,zero
 	/* Stack unwiding */
 	lw    ra, O_RA(sp)
-    1838:	8fbf0018 	lw	ra,24(sp)
+    1838:	8fbf0020 	lw	ra,32(sp)
 	lw    fp, O_FP(sp)
-    183c:	8fbe0014 	lw	s8,20(sp)
+    183c:	8fbe001c 	lw	s8,28(sp)
 	lw    gp, O_GP(sp)
-    1840:	8fbc0010 	lw	gp,16(sp)
+    1840:	8fbc0018 	lw	gp,24(sp)
 
 	addiu sp, sp, SS_MCM
     1844:	27bd0028 	addiu	sp,sp,40
