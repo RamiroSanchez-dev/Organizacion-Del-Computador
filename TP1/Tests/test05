@@ -1,13 +1,11 @@
 #!/bin/bash
 tst="test05"
-val="7"
+val1="7"
 val2="13"
 val3="23"
-spc="Error en los argumentos ingresados. Consulta las ayudas con ./tp1 -h"
-./tp1 -o - $val $val2 $val3 2> RES1 
 
+./tp1 -o - $val1 $val2 $val3 2>RES1 >/dev/null 
 
-
-[ "$spc" = "$(awk 'BEGIN{FS="\n"; RS = ""} { print $0 }' RES1)" ]&& echo "\e[32;1m ✓ $tst\e[0m: Al ejecutar el programa con un numero de mas nos dio: $(awk 'BEGIN{FS="\n"; RS = ""} { print $0 }' RES1)"
-[ "$spc" != "$(awk 'BEGIN{FS="\n"; RS = ""} { print $0 }' RES1)" ]&& echo "\e[31;1m ✗ $tst\e[0m: Al ejecutar el progrma con un numero de mas no nos dio error, en vez de eso nos dio: $(awk 'BEGIN{FS="\n"; RS = ""} { print $0 }' RES1) en vez $spc"
+[ "" != "$(awk 'BEGIN{FS="\n"; RS = ""} { print $1 }' RES1)" ]&& echo "\e[32;1m ✓ $tst\e[0m: Al ejecutar el programa con un numero de mas nos dio: $(awk 'BEGIN{FS="\n"; RS = ""} { print $0 }' RES1)"
+[ "" = "$(awk 'BEGIN{FS="\n"; RS = ""} { print $1 }' RES1)" ]&& echo "\e[31;1m ✗ $tst\e[0m: Al ejecutar el programa con un numero de mas nos dio error"
 rm RES1

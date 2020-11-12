@@ -3,11 +3,8 @@ tst="test07"
 val1="3"
 val2="A"
 
-spc="El parámetro ingresado: (A) no es válido."
-./tp1 -o - $val1 $val2 2> RES1 
+./tp1 -o - $val1 $val2 2> RES1 >/dev/null
 
-
-
-[ "$spc" = "$(awk 'BEGIN{FS="\n"; RS = ""} { print $1 }' RES1)" ]&& echo "\e[32;1m ✓ $tst\e[0m: Al ejecutar el programa con un caracter en vez de un numero nos dio: $(awk 'BEGIN{FS="\n"; RS = ""} { print $0 }' RES1)"
-[ "$spc" != "$(awk 'BEGIN{FS="\n"; RS = ""} { print $1 }' RES1)" ]&& echo "\e[31;1m ✗ $tst\e[0m: Al ejecutar el programa con un caracter en vez de un numero no nos dio error, en vez de eso nos dio: $(awk 'BEGIN{FS="\n"; RS = ""} { print $1 }' RES1) en vez $spc"
+[ "" != "$(awk 'BEGIN{FS="\n"; RS = ""} { print $1 }' RES1)" ]&& echo "\e[32;1m ✓ $tst\e[0m: Al ejecutar el programa con un caracter en vez de un numero nos dio: $(awk 'BEGIN{FS="\n"; RS = ""} { print $0 }' RES1)"
+[ "" = "$(awk 'BEGIN{FS="\n"; RS = ""} { print $1 }' RES1)" ]&& echo "\e[31;1m ✗ $tst\e[0m: Al ejecutar el programa con un caracter en vez de un numero no nos dio error"
 rm RES1
