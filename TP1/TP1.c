@@ -140,14 +140,18 @@ int leer_entrada(int argc, char** argv, unsigned int *m, unsigned int* n, char n
 	
 	if( (argc == 3) && (argumentos_leidos == 0) ){
 		*m = leer_uint(argv[1]);
-		if(m == ERROR_LEC_INT){
-			return -1;
+		if(*m == ERROR_LEC_INT){
+			fprintf(stderr,"El parámetro ingresado: (%s) no es válido.\n",argv[1]);
+			return ERROR_LECTURA;
 		}
 		*n = leer_uint(argv[2]);
-		if(n == ERROR_LEC_INT){
-			return -1;
+		if(*n == ERROR_LEC_INT){
+			fprintf(stderr,"El parámetro ingresado: (%s) no es válido.\n",argv[2]);
+			return ERROR_LECTURA;
 		}
 		*escribio_numeros = true;
+		argumentos_leidos=3; //Porque este es un caso excepcional
+		strcpy(nombre_archivo_salida, "-");
 	}
 	
 	return argumentos_leidos;
