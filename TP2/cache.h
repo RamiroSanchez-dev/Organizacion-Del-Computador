@@ -57,7 +57,7 @@ unsigned int find_set(int address);
  * recientemente usado dentro de un conjunto (o alguno de ellos si hay másde uno),
  * utilizando el campo correspondiente de los metadatos de los bloques del conjunto.
  */
-//unsigned int find_lru(int setnum);
+unsigned int find_lru(int setnum);
 
 /*
  * La función is dirty(int way, int blocknum) debe devolver
@@ -70,12 +70,12 @@ unsigned int is_dirty(int way, int setnum);
  * de memoria y guardarlo en el lugar que le corresponda 
  * en la memoria caché.
  */
-//void read_block(int blocknum);
+void read_block(int blocknum);
 
 /* La función write block(int way, int setnum) debe escribir 
  * en memoria los datos contenidos en el bloque setnum de la vı́a way.
  */
-//void write_block(int way, int setnum);
+void write_block(int way, int setnum);
 
 /*
  * La función read byte(address) debe retornar el valor correspondiente 

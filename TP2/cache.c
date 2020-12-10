@@ -35,7 +35,6 @@ via_t via_init(int cantidad_bloques_en_via){
  * como inválidos, la memoria simulada en 0 y la tasa de misses a 0.
  */
 void init(){
-	/* TODO: bits Valid */
 	cache.tamanio_cache = tamanio_cache * KiB;
 	int tamanio_via = cache.tamanio_cache/cantidad_vias;
 	int cantidad_bloques_en_via = tamanio_via/tamanio_bloque;
@@ -128,13 +127,28 @@ unsigned int is_dirty(int way, int setnum){
 	return es_dirty;
 }
 
+bloque_t obtener_bloque_de_ppal(int address_16){
+	bloque_t bloque = init_bloque();
+	memcpy(bloque.datos,&memoria_ppal[address_16],tamanio_bloque*sizeof(char)); 
+}
+
 /*
  * La función read block(int blocknum) debe leer el bloque blocknum
  * de memoria y guardarlo en el lugar que le corresponda 
  * en la memoria caché.
  */
 void read_block(int blocknum){
-
+	int cantidad_bloques_mem_ppal = TAMANIO_MEMORIA_PPAL/tamanio_bloque;
+	if (!en_rango(blocknum,0,cantidad_bloques_mem_ppal))
+		return; //No se puede hacer nada
+	int address_16 = blocknum << cache.cantidad_bitsOffset;
+	unsigned int set = find_set(address_16);	
+	unsigned int posicion_lru = find_lru(set);
+	if(is_dirty(posicion_lru,set)){
+		write_block(posicion_lru,set);
+	}
+	bloque_destroy(cache.vias[posicion_lru].bloques[set]);
+	cache.vias[posicion_lru].bloques[set] = obtener_bloque_de_ppal(address_16);
 }
 
 /* La función write block(int way, int setnum) debe escribir 
@@ -144,10 +158,6 @@ void write_block(int way, int setnum){
 
 }
 
-
-void traer_a_cache(int address){
-	// TODO
-}
 
 char read_byte_hit(int address){
 	// TODO
@@ -165,7 +175,7 @@ bool hay_hit(){
 char read_byte(int address){
 
 	if(!hay_hit(address)){
-		traer_a_cache(address);
+		//TODO
 	}
 	return read_byte_hit(address);
 }
