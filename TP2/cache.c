@@ -102,7 +102,7 @@ bool es_mayor_lru(bloque_t candidato, bloque_t actual){
  * utilizando el campo correspondiente de los metadatos de los bloques del conjunto.
  */
 unsigned int find_lru(int setnum){
-	if (!en_rango(setnum,0,cantidad_vias-1))
+	if (!en_rango(setnum,0, cache.vias[0].cantidad_bloques_en_via-1))
 		return cantidad_vias; //Valor fuera de rango.
 	unsigned int posicion_lru = 0;
 	bloque_t bloque_lru = cache.vias[0].bloques[setnum];
@@ -145,13 +145,16 @@ void read_block(int blocknum){
 	if (!en_rango(blocknum,0,cantidad_bloques_mem_ppal))
 		return; //No se puede hacer nada
 	int address_16 = blocknum << cache.cantidad_bitsOffset;
-	unsigned int set = find_set(address_16);	
+	unsigned int set = find_set(address_16);
 	unsigned int posicion_lru = find_lru(set);
 	if(is_dirty(posicion_lru,set)){
+		/* TODO: Falta escribir el bloque en ppal */
 		write_block(posicion_lru,set);
 	}
 	bloque_destroy(cache.vias[posicion_lru].bloques[set]);
 	cache.vias[posicion_lru].bloques[set] = obtener_bloque_de_ppal(address_16);
+	cache.vias[posicion_lru].bloques[set].valido = true;
+	/* TODO: Falta actualizar los LRU */
 }
 
 /* La función write block(int way, int setnum) debe escribir 
