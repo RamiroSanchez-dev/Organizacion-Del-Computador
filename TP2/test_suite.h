@@ -8,6 +8,7 @@
 #define ROJO "\x1b[31;1m"
 #define AMARILLO "\x1b[33;1m"
 #define NORMAL "\x1b[0m"
+#define CIAN "\x1b[36;1m"
 
 #define TILDE "✓"
 #define CRUZ "✗"
@@ -15,7 +16,7 @@
 int __test_suite_cantidad_de_pruebas_corridas = 0;
 int __test_suite_cantidad_de_pruebas_fallidas = 0;
 
-void test_suite_afirmar(int afirmacion, const char *descripcion) {
+void test_suite_afirmar(bool afirmacion, const char *descripcion) {
   if (afirmacion) {
     printf(VERDE TILDE " ");
   } else {
@@ -30,6 +31,11 @@ void test_suite_afirmar(int afirmacion, const char *descripcion) {
 void test_suite_nuevo_grupo(const char* descripcion){
   printf(AMARILLO "\n%s\n", descripcion);
   while(*(descripcion++)) printf("=");
+  printf(BLANCO "\n");
+}
+
+void test_suite_informar(const char* descripcion){
+  printf(CIAN "\n%s\n", descripcion);
   printf(BLANCO "\n");
 }
 

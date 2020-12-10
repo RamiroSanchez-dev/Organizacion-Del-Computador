@@ -89,12 +89,23 @@ unsigned int find_lru(int setnum){
 	return 2;
 }
 
+// Chequea que n este en [a,b]
+bool en_rango(int n, int a, int b){ 
+	return (n>=a && n<=b);
+}
+
 /*
  * La función is dirty(int way, int blocknum) debe devolver
  * el estado del bit D del bloque correspondiente.
  */
 unsigned int is_dirty(int way, int setnum){
-	return 34;
+	if (!en_rango(way,0,cantidad_vias-1))
+		return 0;
+	int cantidad_bloques_en_via = cache.vias[0].cantidad_bloques_en_via;
+	if ( !en_rango(setnum,0,cantidad_bloques_en_via-1) )
+		return 0;
+	unsigned int es_dirty = cache.vias[way].bloques[setnum].dirty?1:0;
+	return es_dirty;
 }
 
 /*
