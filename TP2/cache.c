@@ -4,10 +4,16 @@
 #include <math.h>
 
 
+// Chequea que n este en [a,b]
+bool en_rango(int n, int a, int b){ 
+	return (n>=a && n<=b);
+}
+
 bloque_t init_bloque(){
 	bloque_t bloque;
 	bloque.valido = false;
 	bloque.dirty = false;
+	bloque.distancia_lru = 0;
 	bloque.datos = malloc(tamanio_bloque*sizeof(char));
 	return bloque;
 }
@@ -40,10 +46,11 @@ void init(){
 	}
 
 	memset(memoria_ppal, 0, TAMANIO_MEMORIA_PPAL);
-	cache.miss_rate = 0;
-	cache.bitsIndex = (uint8_t)ceil(log2(cantidad_bloques_en_via));
-	cache.bitsOffset = (uint8_t)ceil(log2(tamanio_bloque));
-	cache.bitsTag = BITS_DIRECCION_MEMORIA - cache.bitsIndex - cache.bitsOffset;
+	cache.aciertos = 0;
+	cache.misses = 0;
+	cache.cantidad_bitsIndex = (uint8_t)ceil(log2(cantidad_bloques_en_via));
+	cache.cantidad_bitsOffset = (uint8_t)ceil(log2(tamanio_bloque));
+	cache.cantidad_bitsTag = BITS_DIRECCION_MEMORIA - cache.cantidad_bitsIndex - cache.cantidad_bitsOffset;
 }
 
 
@@ -74,10 +81,18 @@ void destroy(){
  */
 unsigned int find_set(int address){
 	unsigned short address_16 = address;
-	address_16 = address_16 << cache.bitsTag;
-	address_16 = address_16 >> (cache.bitsOffset + cache.bitsTag);
+	address_16 = address_16 << cache.cantidad_bitsTag;
+	address_16 = address_16 >> (cache.cantidad_bitsOffset + cache.cantidad_bitsTag);
 	unsigned int valor_retorno = (0xFFFF & address_16);
 	return valor_retorno;
+}
+
+bool es_mayor_lru(bloque_t candidato, bloque_t actual){
+	if (!actual.valido)
+		return false;
+	if (!candidato.valido)
+		return true;
+	return (candidato.distancia_lru > actual.distancia_lru);
 }
 
 /*
@@ -86,12 +101,17 @@ unsigned int find_set(int address){
  * utilizando el campo correspondiente de los metadatos de los bloques del conjunto.
  */
 unsigned int find_lru(int setnum){
-	return 2;
-}
-
-// Chequea que n este en [a,b]
-bool en_rango(int n, int a, int b){ 
-	return (n>=a && n<=b);
+	if (!en_rango(setnum,0,cantidad_vias-1))
+		return cantidad_vias; //Valor fuera de rango.
+	unsigned int posicion_lru = 0;
+	bloque_t bloque_lru = cache.vias[0].bloques[setnum];
+	for(int i = 1; i < cantidad_vias; i++){
+		if (es_mayor_lru(cache.vias[i].bloques[setnum],bloque_lru)){
+			bloque_lru = cache.vias[i].bloques[setnum];
+			posicion_lru = i;
+		}
+	} 
+	return posicion_lru;
 }
 
 /*
@@ -169,5 +189,7 @@ void write_byte(int address, char value){
  * de misses desde que se inicializó el cache.
  */
 int get_miss_rate(){
-	return 0;
+	if(cache.misses+cache.aciertos == 0)
+		return 0;
+	return cache.misses/(cache.misses+cache.aciertos);
 }

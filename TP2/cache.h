@@ -17,6 +17,7 @@ int cantidad_vias;
 typedef struct bloque{
 	bool dirty;
 	bool valido;
+	int distancia_lru;
 	short direccion;
 	char* datos;
 }bloque_t;
@@ -28,11 +29,12 @@ typedef struct via{
 }via_t;
 
 typedef struct cache{
-	float miss_rate; // porcentaje.
+	int aciertos;
+	int misses;
 	via_t* vias;
-	uint8_t bitsOffset;
-	uint8_t bitsTag;
-	uint8_t bitsIndex;
+	uint8_t cantidad_bitsOffset;
+	uint8_t cantidad_bitsTag;
+	uint8_t cantidad_bitsIndex;
 	unsigned int tamanio_cache;
 }cache_t;
 
@@ -61,7 +63,7 @@ unsigned int find_set(int address);
  * La función is dirty(int way, int blocknum) debe devolver
  * el estado del bit D del bloque correspondiente.
  */
-//unsigned int is_dirty(int way, int setnum);
+unsigned int is_dirty(int way, int setnum);
 
 /*
  * La función read block(int blocknum) debe leer el bloque blocknum
@@ -97,7 +99,7 @@ unsigned int find_set(int address);
  * La función get miss rate() debe devolver el porcentaje 
  * de misses desde que se inicializó el cache.
  */
-//int get_miss_rate();
+int get_miss_rate();
 
 
 /*
