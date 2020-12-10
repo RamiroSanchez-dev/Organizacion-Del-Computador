@@ -1,30 +1,40 @@
 #ifndef CACHE_H
 #define CACHE_H
 
-const int KiB = 1024;
-const int 64KiB = 64*KiB;
-char memoria_ppal[64KiB];
+#include <stdbool.h>
+#include <string.h>
+#include <stdint.h>
+
+#define KiB (1024)
+#define TAMANIO_MEMORIA_PPAL (64*KiB)
+#define BITS_DIRECCION_MEMORIA 16
+char memoria_ppal[TAMANIO_MEMORIA_PPAL];
 
 int tamanio_cache;
 int tamanio_bloque;
 int cantidad_vias;
 
-typedef struct cache{
-	float miss_rate; // porcentaje.
-	via_t* vias;
-	int cantidad_bloques_en_via;
-}cache_t;
-
-typedef struct via{
-	bloque_t* bloques;
-}via_t;
-
 typedef struct bloque{
 	bool dirty;
 	bool valido;
-	short tag;
+	short direccion;
 	char* datos;
 }bloque_t;
+
+
+typedef struct via{
+	bloque_t* bloques;
+	int cantidad_bloques_en_via;
+}via_t;
+
+typedef struct cache{
+	float miss_rate; // porcentaje.
+	via_t* vias;
+	uint8_t bitsOffset;
+	uint8_t bitsTag;
+	uint8_t bitsIndex;
+	unsigned int tamanio_cache;
+}cache_t;
 
 cache_t cache;
 
@@ -32,13 +42,13 @@ cache_t cache;
  * La función init() debe inicializar los bloques de la caché
  * como inválidos, la memoria simulada en 0 y la tasa de misses a 0.
  */
-//void init();
+void init();
 
 /* 
  * La función find set(int address) debe devolver
- * el conjunto de caché al que mapea la dirección address.
+ * el conjunto de caché al que mapea la direccion address.
  */
-//unsigned int find_set(int address);
+unsigned int find_set(int address);
 
 /*
  * La función find lru(int setnum) debe devolver el bloque menos
