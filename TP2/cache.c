@@ -132,6 +132,7 @@ unsigned int is_dirty(int way, int setnum){
 bloque_t obtener_bloque_de_ppal(int address_16){
 	bloque_t bloque = init_bloque();
 	memcpy(bloque.datos,&memoria_ppal[address_16],tamanio_bloque*sizeof(char)); 
+	return bloque;
 }
 
 /*
