@@ -1,8 +1,8 @@
 #!/bin/bash
-tst="test03"
-val="1000"
-val2="5"
-spc="5 1000"
+tst="test15"
+val="1111"
+val2="1294"
+spc="1 1437634"
 ./tp1 -o - $val $val2 > RES1
 ./tp1 -o - $val2 $val > RES2
 
