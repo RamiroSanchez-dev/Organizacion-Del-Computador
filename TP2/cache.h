@@ -32,9 +32,9 @@ typedef struct cache{
 	int aciertos;
 	int misses;
 	via_t* vias;
-	uint8_t cantidad_bitsOffset;
-	uint8_t cantidad_bitsTag;
-	uint8_t cantidad_bitsIndex;
+	int cantidad_bitsOffset;
+	int cantidad_bitsTag;
+	int cantidad_bitsIndex;
 	unsigned int tamanio_cache;
 }cache_t;
 
@@ -57,7 +57,7 @@ unsigned int find_set(int address);
  * recientemente usado dentro de un conjunto (o alguno de ellos si hay másde uno),
  * utilizando el campo correspondiente de los metadatos de los bloques del conjunto.
  */
-//unsigned int find_lru(int setnum);
+unsigned int find_lru(int setnum);
 
 /*
  * La función is dirty(int way, int blocknum) debe devolver
