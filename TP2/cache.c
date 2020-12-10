@@ -47,8 +47,10 @@ void init(){
 	memset(memoria_ppal, 0, TAMANIO_MEMORIA_PPAL);
 	cache.aciertos = 0;
 	cache.misses = 0;
-	cache.cantidad_bitsIndex = (uint8_t)ceil(log2(cantidad_bloques_en_via));
-	cache.cantidad_bitsOffset = (uint8_t)ceil(log2(tamanio_bloque));
+	double d_cantidad_bitsIndex = ceil(log2(cantidad_bloques_en_via));
+	cache.cantidad_bitsIndex = (int) d_cantidad_bitsIndex;
+	double d_cantidad_bitsOffset = ceil(log2(tamanio_bloque));
+	cache.cantidad_bitsOffset = (int ) d_cantidad_bitsOffset;
 	cache.cantidad_bitsTag = BITS_DIRECCION_MEMORIA - cache.cantidad_bitsIndex - cache.cantidad_bitsOffset;
 }
 

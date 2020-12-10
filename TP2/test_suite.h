@@ -2,6 +2,7 @@
 #define __TEST_SUITE_H_
 
 #include <stdio.h>
+#include <stdbool.h>
 
 #define BLANCO "\x1b[37;1m"
 #define VERDE "\x1b[32;1m"

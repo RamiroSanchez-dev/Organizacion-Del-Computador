@@ -32,9 +32,9 @@ typedef struct cache{
 	int aciertos;
 	int misses;
 	via_t* vias;
-	uint8_t cantidad_bitsOffset;
-	uint8_t cantidad_bitsTag;
-	uint8_t cantidad_bitsIndex;
+	int cantidad_bitsOffset;
+	int cantidad_bitsTag;
+	int cantidad_bitsIndex;
 	unsigned int tamanio_cache;
 }cache_t;
 

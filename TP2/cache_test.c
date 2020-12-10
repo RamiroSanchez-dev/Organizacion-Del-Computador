@@ -71,8 +71,58 @@ bool prueba6_Direccion0xF342VaAlSet3(){
 	return paso;
 }
 
+
+bool prueba7_seEncuentraCorrectamenteElLRUEntre4BloquesValidos(){
+	tamanio_cache = 1;
+	tamanio_bloque = 256;
+	cantidad_vias = 4;
+	init();
+	cache.vias[0].bloques[0].valido = true;
+	cache.vias[0].bloques[0].distancia_lru = 3;
+
+	cache.vias[1].bloques[0].valido = true;
+	cache.vias[1].bloques[0].distancia_lru = 4;
+
+	cache.vias[2].bloques[0].valido = true;
+	cache.vias[2].bloques[0].distancia_lru = 2;
+
+	cache.vias[3].bloques[0].valido = true;
+	cache.vias[3].bloques[0].distancia_lru = 1;
+
+	bool paso = (find_lru(0) == 1);
+	destroy();
+	return paso;
+}
+
+bool prueba8_siUnBloqueNoEsValidoEntoncesEsElBloqueQueDevuelveFindLRU(){
+	tamanio_cache = 1;
+	tamanio_bloque = 256;
+	cantidad_vias = 4;
+	init();
+	cache.vias[0].bloques[0].valido = true;
+	cache.vias[0].bloques[0].distancia_lru = 3;
+
+	cache.vias[1].bloques[0].valido = true;
+	cache.vias[1].bloques[0].distancia_lru = 4;
+
+	cache.vias[2].bloques[0].valido = false;
+
+	cache.vias[3].bloques[0].valido = true;
+	cache.vias[3].bloques[0].distancia_lru = 1;
+
+	bool paso = (find_lru(0) == 2);
+	destroy();
+	return paso;
+}
+
+void tests_init_destroy(){
+	test_suite_nuevo_grupo("Pruebas init() y destroy()");
+	test_suite_afirmar(prueba0_init(),"Prueba de memory leaks.");
+}
+
 void tests_findSet(){
 	test_suite_nuevo_grupo("Pruebas find_set()");
+	/* Pruebas de caja negra */
 	test_suite_informar("Configuracion: cs=4, bs=32, w=2");
 	test_suite_afirmar(prueba1_MismoSetDistintoTag(),"Distintas direcciones de memoria con mismo index tienen el mismo set.");
 	test_suite_afirmar(prueba2_DistintoIndexDistintoSet(),"Distintas direcciones de memoria con distinto index tienen distinto set.");
@@ -84,9 +134,19 @@ void tests_findSet(){
 	test_suite_afirmar(prueba6_Direccion0xF342VaAlSet3(),"La direccion 0xF342 mapea al set 3");
 }
 
+void tests_findLRU(){
+	test_suite_nuevo_grupo("Pruebas find_LRU()");
+	/* Pruebas de caja blanca */
+	test_suite_informar("Configuracion: cs=1, bs:256B, w = 4");
+	test_suite_afirmar(prueba7_seEncuentraCorrectamenteElLRUEntre4BloquesValidos(), "Se encuentra correctamente el bloque LRU");
+	test_suite_afirmar(prueba8_siUnBloqueNoEsValidoEntoncesEsElBloqueQueDevuelveFindLRU(), "Si un bloque es invalido, este es el bloque LRU");
+	/* Pruebas de caja negra */
+}
+
 int main(int argc, char const *argv[]){
-	test_suite_afirmar(prueba0_init(),"Prueba de memory leaks.");
+	tests_init_destroy();
 	tests_findSet();
+	tests_findLRU();
 	test_suite_mostrar_reporte();
 	return 0;
 }
