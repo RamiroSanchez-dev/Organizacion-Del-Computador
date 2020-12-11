@@ -14,8 +14,6 @@ int tamanio_cache;
 int tamanio_bloque;
 int cantidad_vias;
 
-
-
 typedef struct bloque{
 	bool dirty;
 	bool valido;
