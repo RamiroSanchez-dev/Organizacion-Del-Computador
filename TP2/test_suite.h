@@ -35,6 +35,10 @@ void test_suite_nuevo_grupo(const char* descripcion){
   printf(BLANCO "\n");
 }
 
+void test_suite_informar_error(const char* descripcion){
+  printf(ROJO "\n%s\n" BLANCO, descripcion);
+}
+
 void test_suite_informar(const char* descripcion){
   printf(CIAN "\n%s\n", descripcion);
   printf(BLANCO "\n");

@@ -210,7 +210,7 @@ void actualizar_lru(int address){
 	unsigned int set = find_set(address);
 	for (int i = 0; i < cantidad_vias; i++){
 		bloque_t* bloque = &cache.vias[i].bloques[set];
-		if(get_blocknum(address) == get_blocknum(bloque->direccion)){
+		if(get_blocknum(address) != get_blocknum(bloque->direccion)){
 			if(bloque->valido){
 				bloque->distancia_lru++;
 			}
@@ -224,7 +224,7 @@ void actualizar_lru(int address){
  * La función read byte(address) debe retornar el valor correspondiente 
  * a la posición de memoria address, buscándolo primero en el caché.
  */
-char read_byte(int address){
+unsigned char read_byte(int address){
 	if(!hay_hit(address)){
 		read_block(get_blocknum(address));
 		cache.misses++;
@@ -241,7 +241,7 @@ char read_byte(int address){
  * address.
  */
  // WB/WA: Escribimos sólo en cache ||| escribimos en ram sólo cuando se saca el bloque.
-void write_byte(int address, char value){
+void write_byte(int address, unsigned char value){
 	unsigned int offset = get_offset(address);
 	if(!hay_hit(address)){
 		read_block(get_blocknum(address));
@@ -267,5 +267,5 @@ void write_byte(int address, char value){
 int get_miss_rate(){
 	if(cache.misses+cache.aciertos == 0)
 		return 0;
-	return cache.misses/(cache.misses+cache.aciertos);
+	return((cache.misses*100)/(cache.misses+cache.aciertos));
 }
