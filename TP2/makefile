@@ -12,6 +12,9 @@ VALGRIND = valgrind --leak-check=full --track-origins=yes --show-reachable=yes
 test:
 	$(CC) $(CFLAGS) $(TEST) $(CACHE) $(LINKER) -o test
 
+tp2:
+	$(CC) $(CFLAGS) $(CACHE) $(LINKER) TP2.c -o tp2
+
 valgrind_test:
 	$(VALGRIND) ./test
 
