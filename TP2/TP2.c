@@ -9,16 +9,23 @@
 
 
 bool es_potencia_de_dos(int numero){
-	while(numero%2==0 && )
+	if (numero < 1)
+		return false;
+
+	while(numero % 2 == 0){
+		numero = numero / 2;
+	}
+
+	return (numero == 1);
 }
 
 int verificar_parametros(){
 	if(tamanio_cache <= 0 || tamanio_bloque <= 0 || cantidad_vias <= 0){
-		fprintf(stderr, "Error -- ninguno de los siguientes valores puede ser menor a cero: cachesize (%i) blocksize (%i) ways(%i)\n",tamanio_cache,tamanio_bloque,cantidad_vias);
+		fprintf(stderr, "Error -- Es necesario que ingrese todos los siguientes valores y que sean mayores a cero: cachesize(%i) blocksize(%i) ways(%i)\n",tamanio_cache,tamanio_bloque,cantidad_vias);
 		return ERROR_LECTURA;
 	}
 	if(!es_potencia_de_dos(tamanio_cache) || !es_potencia_de_dos(tamanio_bloque) || !es_potencia_de_dos(cantidad_vias)){
-		fprintf(stderr, "Error -- todos los siguientes valores deben ser potencias de dos: cachesize(%i) blocksize(%i) cantidad_vias(%i)\n",tamanio_cache,tamanio_bloque,cantidad_vias);
+		fprintf(stderr, "Error -- Todos los siguientes valores deben ser potencias de dos: cachesize(%i) blocksize(%i) cantidad_vias(%i)\n",tamanio_cache,tamanio_bloque,cantidad_vias);
 		return ERROR_LECTURA;
 	}
 
@@ -119,6 +126,7 @@ int main(int argc, char const *argv[]){
 	/*  ======    ERROR HANDLING    ======   */
 	if(resultado_lectura == ERROR_LECTURA || verificar_parametros() == ERROR_LECTURA){
 		fprintf(stderr, "Finalizando ejecución del programa.\n");
+		fprintf(stderr, "Consulta las ayudas con ./tp2 -h\n");
 		return -1;
 	}
 

@@ -11,7 +11,7 @@
 char memoria_ppal[TAMANIO_MEMORIA_PPAL];
 
 int tamanio_cache = 0;
-int tamanio_bloque; = 0
+int tamanio_bloque = 0;
 int cantidad_vias = 0;
 
 
@@ -85,14 +85,14 @@ void write_block(int way, int setnum);
  * La función read byte(address) debe retornar el valor correspondiente 
  * a la posición de memoria address, buscándolo primero en el caché.
  */
-char read_byte(int address);
+unsigned char read_byte(int address);
 
 /*
  * La función write byte(int address, char value) debe escribir el
  * valor value en la posición correcta del bloque que corresponde a
  * address.
  */
-void write_byte(int address, char value);
+void write_byte(int address, unsigned char value);
 
 /*
  * read byte() y write byte() sólo deben interactuar con la memoria
