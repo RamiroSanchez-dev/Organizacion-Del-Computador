@@ -155,9 +155,45 @@ bool prueba9_leerUnBloqueDeMemoriaPrincipalCargaCorrectamenteElBloqueEnCache(){
 	paso = paso && (cache.vias[0].bloques[0xA].datos[1] == 'O');
 	paso = paso && (cache.vias[0].bloques[0xA].datos[2] == 'L');
 	paso = paso && (cache.vias[0].bloques[0xA].datos[3] == 'A');
+	paso = paso && (cache.vias[0].bloques[0xA].direccion == 0x28);
 	destroy();
 	return paso;
 }
+
+
+/* Pruebas write_block() */
+
+bool prueba11_CuandoSeEscribeUnBloqueEnMemoriaPpalEstaContieneLosDatosDeCache(){
+	tamanio_cache = 1;
+	tamanio_bloque = 4;
+	cantidad_vias = 1;
+	/*
+	 * #b_offset = 2;
+	 * #b_index = 8;
+	 * #b_tag = 6;
+	 */
+	init();
+	cache.vias[0].bloques[0xA].direccion = 0x28;
+	cache.vias[0].bloques[0xA].dirty = true;
+	cache.vias[0].bloques[0xA].valido = true;
+	cache.vias[0].bloques[0xA].datos[0] = 'H';
+	cache.vias[0].bloques[0xA].datos[1] = 'O';
+	cache.vias[0].bloques[0xA].datos[2] = 'L';
+	cache.vias[0].bloques[0xA].datos[3] = 'A';
+	write_block(0, 0xA);
+
+	bool paso = true;
+
+	paso = paso && (memoria_ppal[40] == 'H');
+	paso = paso && (memoria_ppal[41] == 'O');
+	paso = paso && (memoria_ppal[42] == 'L');
+	paso = paso && (memoria_ppal[43] == 'A');
+
+	destroy();
+	return paso;
+}
+
+
 
 void tests_init_destroy(){
 	test_suite_nuevo_grupo("Pruebas de init() y destroy()");
@@ -195,11 +231,20 @@ void tests_readBlock(){
 	test_suite_afirmar(prueba9_leerUnBloqueDeMemoriaPrincipalCargaCorrectamenteElBloqueEnCache(), "Se lee un bloque de memoria ram, este coincide con lo esperado.");
 }
 
+void tests_write_block(){
+	test_suite_nuevo_grupo("Pruebas de write_block()");
+	/* Pruebas de caja blanca */
+	test_suite_informar("Configuracion: cs=1, bs:4B, w = 1");
+	test_suite_afirmar(prueba11_CuandoSeEscribeUnBloqueEnMemoriaPpalEstaContieneLosDatosDeCache(), "Se escribe un bloque de cache en memoria ppal y esta es sobreescrita.");
+
+}
+
 int main(int argc, char const *argv[]){
 	tests_init_destroy();
 	tests_findSet();
 	tests_findLRU();
 	tests_readBlock();
+	tests_write_block();
 	test_suite_mostrar_reporte();
 	return 0;
 }

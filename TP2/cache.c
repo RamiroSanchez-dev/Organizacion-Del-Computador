@@ -52,6 +52,7 @@ void init(){
 	double d_cantidad_bitsOffset = ceil(log2(tamanio_bloque));
 	cache.cantidad_bitsOffset = (int ) d_cantidad_bitsOffset;
 	cache.cantidad_bitsTag = BITS_DIRECCION_MEMORIA - cache.cantidad_bitsIndex - cache.cantidad_bitsOffset;
+	cache.cantidad_bloques_en_via = cantidad_bloques_en_via;
 }
 
 
@@ -102,7 +103,7 @@ bool es_mayor_lru(bloque_t candidato, bloque_t actual){
  * utilizando el campo correspondiente de los metadatos de los bloques del conjunto.
  */
 unsigned int find_lru(int setnum){
-	if (!en_rango(setnum,0, cache.vias[0].cantidad_bloques_en_via-1))
+	if (!en_rango(setnum,0, cache.cantidad_bloques_en_via-1))
 		return cantidad_vias; //Valor fuera de rango.
 	unsigned int posicion_lru = 0;
 	bloque_t bloque_lru = cache.vias[0].bloques[setnum];
@@ -131,7 +132,9 @@ unsigned int is_dirty(int way, int setnum){
 
 bloque_t obtener_bloque_de_ppal(int address_16){
 	bloque_t bloque = init_bloque();
-	memcpy(bloque.datos,&memoria_ppal[address_16],tamanio_bloque*sizeof(char)); 
+	bloque.valido = true;
+	bloque.direccion = address_16;
+	memcpy(bloque.datos,&memoria_ppal[address_16],tamanio_bloque*sizeof(char));
 	return bloque;
 }
 
@@ -153,15 +156,16 @@ void read_block(int blocknum){
 	}
 	bloque_destroy(cache.vias[posicion_lru].bloques[set]);
 	cache.vias[posicion_lru].bloques[set] = obtener_bloque_de_ppal(address_16);
-	cache.vias[posicion_lru].bloques[set].valido = true;
-	/* TODO: Falta actualizar los LRU */
 }
 
 /* La función write block(int way, int setnum) debe escribir 
  * en memoria los datos contenidos en el bloque setnum de la vı́a way.
  */
 void write_block(int way, int setnum){
-
+	if(!en_rango(way, 0, cantidad_vias) || !en_rango(setnum, 0, cache.cantidad_bloques_en_via - 1))
+		return;
+	bloque_t bloque = cache.vias[way].bloques[setnum];
+	memcpy(&memoria_ppal[bloque.direccion], bloque.datos, tamanio_bloque);
 }
 
 
@@ -179,10 +183,10 @@ bool hay_hit(){
  * a la posición de memoria address, buscándolo primero en el caché.
  */
 char read_byte(int address){
-
 	if(!hay_hit(address)){
 		//TODO
 	}
+	/* TODO: Falta actualizar los LRU */
 	return read_byte_hit(address);
 }
 
