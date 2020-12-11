@@ -5,9 +5,12 @@
 
 #include "cache.h"
 #include "interprete.h"
+#include <stdlib.h>
+#include <getopt.h>
 #include <stdio.h>
 #include <stdbool.h>
-
+#include <errno.h>
+#include <limits.h>
 
 bool es_potencia_de_dos(int numero){
 	if (numero < 1)
@@ -35,13 +38,22 @@ int verificar_parametros(){
 
 unsigned int leer_uint(char* string){
 	long resultado = strtol(string, NULL, 10);
-	if(resultado > UINT_MAX || errno == ERANGE || resultado <= 0){
+	if(resultado > UINT_MAX || errno == ERANGE){
+		fprintf(stderr, "Error -- El numero (%s) esta fuera del rango representable.\n",string);
 		return ERROR_LECTURA;
 	}
 	return (int) resultado;
 }
 
-int leer_entrada(int argc, char const *argv[], FILE* archivo_entrada, FILE* archivo_salida){
+void mostrar_ayuda(){
+
+}
+
+void mostrar_version(){
+
+}
+
+int leer_entrada(int argc, char** argv, FILE* archivo_entrada, FILE* archivo_salida){
 	bool pidio_ayuda=false,pidio_version=false,error_lectura=false;
 
 	if(argc == 1 ){
@@ -101,7 +113,8 @@ int leer_entrada(int argc, char const *argv[], FILE* archivo_entrada, FILE* arch
 	/*  ======    ERROR HANDLING    ======   */
 	if(!archivo_entrada){
 		fprintf(stderr, "Error al abrir el archivo ( %s )\n",argv[argc - 1]);
-		fclose(archivo_salida);
+		if(archivo_salida != NULL && archivo_salida != stdout)
+			fclose(archivo_salida);
 		error_lectura = true;
 	}
 
@@ -112,9 +125,9 @@ int leer_entrada(int argc, char const *argv[], FILE* archivo_entrada, FILE* arch
 	return LECTURA_EXITOSA;
 }
 
-int main(int argc, char const *argv[]){
+int main(int argc, char *argv[]){
 	FILE* archivo_entrada = NULL;
-	FILE* archivo_salida = NULL;
+	FILE* archivo_salida = stdout;
 	int resultado_lectura;
 
 	resultado_lectura = leer_entrada(argc, argv, archivo_entrada, archivo_salida);
@@ -127,14 +140,24 @@ int main(int argc, char const *argv[]){
 	}
 
 	if(resultado_lectura == PIDIO_AYUDA || resultado_lectura == PIDIO_VERSION){
-		fclose(archivo_entrada);
-		fclose(archivo_salida);
+		if(archivo_salida != NULL && archivo_salida != stdout)
+			fclose(archivo_salida);
+		if(archivo_entrada != NULL)
+			fclose(archivo_entrada);
 		return 0;
 	}
 
+	printf("bs: %i\n",tamanio_bloque);
+	printf("cs: %i\n",tamanio_cache);
+	printf("w: %i\n",cantidad_vias);
 
-	init();
-	interpretar(archivo);
-	destroy();
+	//init();
+	//interpretar(archivo);
+	//destroy();
+
+	if(archivo_salida != NULL && archivo_salida != stdout)
+		fclose(archivo_salida);
+	if(archivo_entrada != NULL)
+		fclose(archivo_entrada);
 	return 0;
 }
