@@ -4,6 +4,7 @@
 #define PIDIO_VERSION 1
 
 #include "cache.h"
+#include "interprete.h"
 #include <stdio.h>
 #include <stdbool.h>
 
@@ -109,11 +110,6 @@ int leer_entrada(int argc, char const *argv[], FILE* archivo_entrada, FILE* arch
 	if(error_lectura) return ERROR_LECTURA;
 
 	return LECTURA_EXITOSA;
-}
-
-void interpretar(FILE* archivo){
-	// TODO
-	while(!feof(archivo)){}
 }
 
 int main(int argc, char const *argv[]){
