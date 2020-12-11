@@ -1,6 +1,6 @@
+#include <stdio.h>
 #include "cache.h"
 #include "test_suite.h"
-#include <stdio.h>
 
 bool unit_test0_init(){
 	tamanio_cache = 4;

@@ -54,6 +54,7 @@ void init(){
 	cache.cantidad_bitsOffset = (int ) d_cantidad_bitsOffset;
 	cache.cantidad_bitsTag = BITS_DIRECCION_MEMORIA - cache.cantidad_bitsIndex - cache.cantidad_bitsOffset;
 	cache.cantidad_bloques_en_via = cantidad_bloques_en_via;
+	cache.hit = false;
 }
 
 
@@ -227,8 +228,10 @@ void actualizar_lru(int address){
 unsigned char read_byte(int address){
 	if(!hay_hit(address)){
 		read_block(get_blocknum(address));
+		cache.hit = false;
 		cache.misses++;
 	}else{
+		cache.hit = true;
 		cache.aciertos++;
 	}
 	actualizar_lru(address);
@@ -245,8 +248,10 @@ void write_byte(int address, unsigned char value){
 	unsigned int offset = get_offset(address);
 	if(!hay_hit(address)){
 		read_block(get_blocknum(address));
+		cache.hit = false;
 		cache.misses++;
 	}else{
+		cache.hit = true;
 		cache.aciertos++;
 	}
 	bloque_t* bloque = obtener_bloque_de_cache(address);

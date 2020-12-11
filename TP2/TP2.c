@@ -1,5 +1,5 @@
 #define ERROR_LECTURA -1
-#define LECTURA_EXITOSA
+#define LECTURA_EXITOSA 0
 #define PIDIO_AYUDA 1
 #define PIDIO_VERSION 1
 
