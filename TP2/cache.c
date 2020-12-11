@@ -89,6 +89,11 @@ unsigned int find_set(int address){
 	return valor_retorno;
 }
 
+unsigned int get_blocknum(int address){
+	return(address >> cache.cantidad_bitsOffset);	
+}
+
+
 bool es_mayor_lru(bloque_t candidato, bloque_t actual){
 	if (!actual.valido)
 		return false;
@@ -168,14 +173,49 @@ void write_block(int way, int setnum){
 	memcpy(&memoria_ppal[bloque.direccion], bloque.datos, tamanio_bloque);
 }
 
+/*
+bloque_t* get_bloque(int address){
+	for(int i = 0; i < cantidad_vias; i++){
 
-char read_byte_hit(int address){
-	// TODO
-	return 'a';
+	}
+}
+*/
+char read_byte_cache(int address){
+	unsigned int set = find_set(address);
+	unsigned int offset = get_offset();
+	for (int i = 0; i < cantidad_vias; i++){
+		bloque_t bloque = cache.vias[i].bloques[set];
+		if(address == bloque.direccion){
+			return cache.vias[i].bloques[set].datos[offset];
+		}
+	}
 }
 
-bool hay_hit(){
-	return true;
+bool hay_hit(int address){
+	bool esta_en_cache = false;
+	unsigned int set = find_set(address);
+	for (int i = 0; i < cantidad_vias; i++){
+		bloque_t bloque = cache.vias[i].bloques[set];
+		if((bloque.direccion == address) && (bloque.valido)){
+			esta_en_cache = true;
+		}
+	}
+	return esta_en_cache;
+}
+
+
+void actualizar_lru(int address){
+	unsigned int set = find_set(address);
+	for (int i = 0; i < cantidad_vias; i++){
+		bloque_t* bloque = &cache.vias[i].bloques[set];
+		if(address == bloque->direccion){
+			if(bloque->valido){
+				bloque->distancia_lru++;
+			}
+		}else{
+			bloque->distancia_lru = 0;
+		}
+	}
 }
 
 /*
@@ -184,10 +224,13 @@ bool hay_hit(){
  */
 char read_byte(int address){
 	if(!hay_hit(address)){
-		//TODO
+		read_block(get_blocknum(address));
+		cache.misses++;
+	}else{
+		cache.aciertos++;
 	}
-	/* TODO: Falta actualizar los LRU */
-	return read_byte_hit(address);
+	actualizar_lru(address);
+	return read_byte_cache(address);
 }
 
 /*

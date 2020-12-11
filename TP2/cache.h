@@ -75,7 +75,8 @@ unsigned int is_dirty(int way, int setnum);
  */
 void read_block(int blocknum);
 
-/* La función write block(int way, int setnum) debe escribir 
+/*
+ * La función write block(int way, int setnum) debe escribir 
  * en memoria los datos contenidos en el bloque setnum de la vı́a way.
  */
 void write_block(int way, int setnum);
