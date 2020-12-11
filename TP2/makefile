@@ -7,9 +7,13 @@ CFLAGS += -pedantic
 TEST = test_suite.h cache_test.c
 CACHE = cache.h cache.c
 LINKER = -lm
+VALGRIND = valgrind --leak-check=full --track-origins=yes --show-reachable=yes
 
 test:
 	$(CC) $(CFLAGS) $(TEST) $(CACHE) $(LINKER) -o test
+
+valgrind_test:
+	$(VALGRIND) ./test
 
 .PHONY : clean
 	rm -f test

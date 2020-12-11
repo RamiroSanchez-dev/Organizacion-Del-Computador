@@ -11,6 +11,7 @@ bool prueba0_init(){
 	return true;
 }
 
+
 /* Pruebas find_set() */
 
 bool prueba1_MismoSetDistintoTag(){
@@ -73,6 +74,7 @@ bool prueba6_Direccion0xF342VaAlSet3(){
 	return paso;
 }
 
+
 /* Pruebas find_lru() */
 
 bool prueba7_seEncuentraCorrectamenteElLRUEntre4BloquesValidos(){
@@ -130,6 +132,7 @@ bool prueba10_LRUEnCacheConSoloUnaViaDevuelveCero(){
 	destroy();
 	return paso;
 }
+
 
 /* Pruebas read_block() */
 
@@ -399,6 +402,185 @@ bool prueba15_CuandoSeLeeUnByteQueProduceMissElBloqueEsCargadoEnCacheEnElLRU(){
 	return paso;
 }
 
+
+/* Prueabs write_byte() */
+
+bool prueba16_CuandoSeEscribeUnByteConHitSeEscribeCorrectamenteElValorEnCache(){
+	tamanio_cache = 1;
+	tamanio_bloque = 4;
+	cantidad_vias = 4;
+	/*
+	 * #b_offset = 2;
+	 * #b_index = 6;
+	 * #b_tag = 8;
+	 */
+	init();
+
+	cache.vias[0].bloques[14].valido = false;
+	
+	cache.vias[1].bloques[14].valido = false;
+
+	cache.vias[2].bloques[14].valido = true;
+	cache.vias[2].bloques[14].dirty = false;
+	cache.vias[2].bloques[14].distancia_lru = 1;
+	cache.vias[2].bloques[14].direccion = 0x2138;
+	cache.vias[2].bloques[14].datos[0] = 'A';
+	cache.vias[2].bloques[14].datos[1] = 'B';
+	cache.vias[2].bloques[14].datos[2] = 'C';
+	cache.vias[2].bloques[14].datos[3] = 'D';
+
+	cache.vias[3].bloques[14].valido = false;
+
+	write_byte(0x2138 + 1, 'F');
+
+	bool paso = true;
+	paso = paso && cache.vias[2].bloques[14].datos[0] == 'A';
+	paso = paso && cache.vias[2].bloques[14].datos[1] == 'F';
+	paso = paso && cache.vias[2].bloques[14].datos[2] == 'C';
+	paso = paso && cache.vias[2].bloques[14].datos[3] == 'D';
+	destroy();
+	return paso;
+}
+
+bool prueba17_CuandoSeEscrbieUnByteConHitNoSeSobreescribeEnMemoriaPrincipal(){
+	tamanio_cache = 1;
+	tamanio_bloque = 4;
+	cantidad_vias = 4;
+	/*
+	 * #b_offset = 2;
+	 * #b_index = 6;
+	 * #b_tag = 8;
+	 */
+	init();
+
+	cache.vias[0].bloques[14].valido = false;
+	
+	cache.vias[1].bloques[14].valido = false;
+
+	cache.vias[2].bloques[14].valido = true;
+	cache.vias[2].bloques[14].dirty = false;
+	cache.vias[2].bloques[14].distancia_lru = 1;
+	cache.vias[2].bloques[14].direccion = 0x2138;
+	cache.vias[2].bloques[14].datos[0] = 'A';
+	cache.vias[2].bloques[14].datos[1] = 'B';
+	cache.vias[2].bloques[14].datos[2] = 'C';
+	cache.vias[2].bloques[14].datos[3] = 'D';
+
+	cache.vias[3].bloques[14].valido = false;
+
+	char m0 = memoria_ppal[0x2138 + 0];
+	char m1 = memoria_ppal[0x2138 + 1];
+	char m2 = memoria_ppal[0x2138 + 2];
+	char m3 = memoria_ppal[0x2138 + 3];
+
+	write_byte(0x2138 + 1, 'F');
+
+	bool paso = true;
+	paso = paso && memoria_ppal[0x2138 + 0] == m0;
+	paso = paso && memoria_ppal[0x2138 + 1] == m1;
+	paso = paso && memoria_ppal[0x2138 + 2] == m2;
+	paso = paso && memoria_ppal[0x2138 + 3] == m3;
+	destroy();
+	return paso;
+}
+
+bool prueba18_CuandoSeEscribeUnByteConMissSeEscribeCorrectamenteElValorEnCache(){
+	tamanio_cache = 1;
+	tamanio_bloque = 4;
+	cantidad_vias = 4;
+	/*
+	 * #b_offset = 2;
+	 * #b_index = 6;
+	 * #b_tag = 8;
+	 */
+	init();
+
+	cache.vias[0].bloques[14].valido = true;
+	cache.vias[0].bloques[14].direccion = 0x1138;
+	cache.vias[0].bloques[14].distancia_lru = 1;
+
+	cache.vias[1].bloques[14].valido = true;
+	cache.vias[1].bloques[14].direccion = 0x1238;
+	cache.vias[1].bloques[14].distancia_lru = 3;
+	cache.vias[1].bloques[14].dirty = false;
+
+	cache.vias[2].bloques[14].valido = true;
+	cache.vias[2].bloques[14].direccion = 0x1338;
+	cache.vias[2].bloques[14].distancia_lru = 4;
+	cache.vias[2].bloques[14].dirty = false;
+
+	cache.vias[3].bloques[14].valido = true;
+	cache.vias[3].bloques[14].direccion = 0x1438;
+	cache.vias[3].bloques[14].distancia_lru = 2;
+	cache.vias[3].bloques[14].dirty = false;
+
+
+	memoria_ppal[0x2138 + 0] = 'A';
+	memoria_ppal[0x2138 + 1] = 'B';
+	memoria_ppal[0x2138 + 2] = 'C';
+	memoria_ppal[0x2138 + 3] = 'D';
+
+	write_byte(0x2138 + 1, 'F');
+
+	bool paso = true;
+	paso = paso && cache.vias[2].bloques[14].datos[0] == 'A';
+	paso = paso && cache.vias[2].bloques[14].datos[1] == 'F';
+	paso = paso && cache.vias[2].bloques[14].datos[2] == 'C';
+	paso = paso && cache.vias[2].bloques[14].datos[3] == 'D';
+	destroy();
+	return paso;
+}
+
+bool prueba19_CuandoSeEscribeUnByteConMissNoSeSobreescribeEnMemoriaPrincipal(){
+	tamanio_cache = 1;
+	tamanio_bloque = 4;
+	cantidad_vias = 4;
+	/*
+	 * #b_offset = 2;
+	 * #b_index = 6;
+	 * #b_tag = 8;
+	 */
+	init();
+
+	cache.vias[0].bloques[14].valido = true;
+	cache.vias[0].bloques[14].direccion = 0x1138;
+	cache.vias[0].bloques[14].distancia_lru = 1;
+
+	cache.vias[1].bloques[14].valido = true;
+	cache.vias[1].bloques[14].direccion = 0x1238;
+	cache.vias[1].bloques[14].distancia_lru = 3;
+	cache.vias[1].bloques[14].dirty = false;
+
+	cache.vias[2].bloques[14].valido = true;
+	cache.vias[2].bloques[14].direccion = 0x1338;
+	cache.vias[2].bloques[14].distancia_lru = 4;
+	cache.vias[2].bloques[14].dirty = false;
+
+	cache.vias[3].bloques[14].valido = true;
+	cache.vias[3].bloques[14].direccion = 0x1438;
+	cache.vias[3].bloques[14].distancia_lru = 2;
+	cache.vias[3].bloques[14].dirty = false;
+
+	char m0 = memoria_ppal[0x2138 + 0];
+	char m1 = memoria_ppal[0x2138 + 1];
+	char m2 = memoria_ppal[0x2138 + 2];
+	char m3 = memoria_ppal[0x2138 + 3];
+
+	write_byte(0x2138 + 1, 'F');
+
+	bool paso = true;
+	paso = paso && memoria_ppal[0x2138 + 0] == m0;
+	paso = paso && memoria_ppal[0x2138 + 1] == m1;
+	paso = paso && memoria_ppal[0x2138 + 2] == m2;
+	paso = paso && memoria_ppal[0x2138 + 3] == m3;
+
+	destroy();
+	return paso;
+}
+
+
+
+
 void tests_init_destroy(){
 	test_suite_nuevo_grupo("Pruebas de init() y destroy()");
 	test_suite_afirmar(prueba0_init(),"Prueba de memory leaks.");
@@ -452,6 +634,28 @@ void tests_read_byte(){
 	test_suite_afirmar(prueba15_CuandoSeLeeUnByteQueProduceMissElBloqueEsCargadoEnCacheEnElLRU(), "Cuando leemos un byte que produce miss, el bloque es cargado en la posicion del LRU (Que esta dirty).");
 }
 
+void tests_write_byte(){
+	test_suite_nuevo_grupo("Pruebas de read_byte()");
+	/* Pruebas de caja blanca */
+	test_suite_informar("Configuracion: cs=1, bs:4B, w = 4");
+	test_suite_afirmar(prueba16_CuandoSeEscribeUnByteConHitSeEscribeCorrectamenteElValorEnCache(), "Cuando se escribe un byte en una dirección con hit, esta se escribe correctamente en caché.");
+	test_suite_afirmar(prueba17_CuandoSeEscrbieUnByteConHitNoSeSobreescribeEnMemoriaPrincipal(), "Cuando se escribe un byte en una dirección con hit, no se sobreescribe la memoria principal.");
+	test_suite_afirmar(prueba18_CuandoSeEscribeUnByteConMissSeEscribeCorrectamenteElValorEnCache(), "Cuando se escribe un byte en una dirección con miss, el bloque se carga en cache y el valor es escrito.");
+	test_suite_afirmar(prueba19_CuandoSeEscribeUnByteConMissNoSeSobreescribeEnMemoriaPrincipal(), "Cuando se escribe un byte en una dirección con miss, no se sobreescribe la memoria principal.");
+	/*
+	 * testear cuando se saca un bloque dirty lru
+	 * testear que el bloque escrito este dirty
+	 */
+}
+
+void tests_integradores(){
+	/* 
+	 * testear en un caso de comienzo (todos invalidos);
+	 * testear un caso ya inicializado.
+	 * testear el miss rate.
+	 */
+}
+
 int main(int argc, char const *argv[]){
 	tests_init_destroy();
 	tests_findSet();
@@ -459,6 +663,8 @@ int main(int argc, char const *argv[]){
 	tests_readBlock();
 	tests_write_block();
 	tests_read_byte();
+	tests_write_byte();
+	tests_integradores();
 	test_suite_mostrar_reporte();
 	return 0;
 }

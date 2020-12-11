@@ -92,7 +92,7 @@ char read_byte(int address);
  * valor value en la posición correcta del bloque que corresponde a
  * address.
  */
-//void write_byte(int address, char value);
+void write_byte(int address, char value);
 
 /*
  * read byte() y write byte() sólo deben interactuar con la memoria

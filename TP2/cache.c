@@ -13,6 +13,7 @@ bloque_t init_bloque(){
 	bloque_t bloque;
 	bloque.valido = false;
 	bloque.dirty = false;
+	bloque.direccion = 0x0;
 	bloque.distancia_lru = 0;
 	bloque.datos = malloc(tamanio_bloque*sizeof(char));
 	return bloque;
@@ -156,7 +157,6 @@ void read_block(int blocknum){
 	unsigned int set = find_set(address_16);
 	unsigned int posicion_lru = find_lru(set);
 	if(is_dirty(posicion_lru,set)){
-		/* TODO: Falta escribir el bloque en ppal */
 		write_block(posicion_lru,set);
 	}
 	bloque_destroy(cache.vias[posicion_lru].bloques[set]);
@@ -240,8 +240,19 @@ char read_byte(int address){
  * valor value en la posición correcta del bloque que corresponde a
  * address.
  */
+ // WB/WA: Escribimos sólo en cache ||| escribimos en ram sólo cuando se saca el bloque.
 void write_byte(int address, char value){
-
+	unsigned int offset = get_offset(address);
+	if(!hay_hit(address)){
+		read_block(get_blocknum(address));
+		cache.misses++;
+	}else{
+		cache.aciertos++;
+	}
+	bloque_t* bloque = obtener_bloque_de_cache(address);
+	bloque->datos[offset] = value;
+	bloque->dirty = true;
+	actualizar_lru(address);
 }
 
 /*
