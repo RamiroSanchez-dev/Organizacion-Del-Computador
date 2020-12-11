@@ -8,12 +8,12 @@ TEST = test_suite.h cache_test.c
 CACHE = cache.h cache.c
 LINKER = -lm
 VALGRIND = valgrind --leak-check=full --track-origins=yes --show-reachable=yes
-
+INTERPRETE = interprete.h interprete.c 
 test:
 	$(CC) $(CFLAGS) $(TEST) $(CACHE) $(LINKER) -o test
 
 tp2:
-	$(CC) $(CFLAGS) $(CACHE) $(LINKER) TP2.c -o tp2
+	$(CC) $(CFLAGS) $(CACHE) $(INTERPRETE) $(LINKER) TP2.c -o tp2
 
 valgrind_test:
 	$(VALGRIND) ./test

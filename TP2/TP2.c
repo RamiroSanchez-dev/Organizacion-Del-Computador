@@ -53,7 +53,7 @@ void mostrar_version(){
 
 }
 
-int leer_entrada(int argc, char** argv, FILE* archivo_entrada, FILE* archivo_salida){
+int leer_entrada(int argc, char** argv, FILE** archivo_entrada, FILE** archivo_salida){
 	bool pidio_ayuda=false,pidio_version=false,error_lectura=false;
 
 	if(argc == 1 ){
@@ -77,7 +77,7 @@ int leer_entrada(int argc, char** argv, FILE* archivo_entrada, FILE* archivo_sal
 		switch(opt){
 
 			case 'o':
-				archivo_salida=fopen(optarg,"w");
+				*archivo_salida = fopen(optarg,"w");
 				if(!archivo_salida){
 					fprintf(stderr, "Error al leer el archivo de salida ( %s ).\n",optarg);
 					error_lectura = true;
@@ -107,14 +107,14 @@ int leer_entrada(int argc, char** argv, FILE* archivo_entrada, FILE* archivo_sal
 				break;
 		}
 	}
-	archivo_entrada = fopen(argv[argc - 1],"r");
+	*archivo_entrada = fopen(argv[argc - 1],"r");
 
 
 	/*  ======    ERROR HANDLING    ======   */
-	if(!archivo_entrada){
+	if(!(*archivo_entrada)){
 		fprintf(stderr, "Error al abrir el archivo ( %s )\n",argv[argc - 1]);
-		if(archivo_salida != NULL && archivo_salida != stdout)
-			fclose(archivo_salida);
+		if(*archivo_salida != NULL && *archivo_salida != stdout)
+			fclose(*archivo_salida);
 		error_lectura = true;
 	}
 
@@ -130,7 +130,7 @@ int main(int argc, char *argv[]){
 	FILE* archivo_salida = stdout;
 	int resultado_lectura;
 
-	resultado_lectura = leer_entrada(argc, argv, archivo_entrada, archivo_salida);
+	resultado_lectura = leer_entrada(argc, argv, &archivo_entrada, &archivo_salida);
 	
 	/*  ======    ERROR HANDLING    ======   */
 	if(resultado_lectura == ERROR_LECTURA || verificar_parametros() == ERROR_LECTURA){
@@ -147,13 +147,19 @@ int main(int argc, char *argv[]){
 		return 0;
 	}
 
+	if(!archivo_entrada){
+		if(archivo_salida != NULL && archivo_salida != stdout)
+			fclose(archivo_salida);
+		return 0;
+	}
+
 	printf("bs: %i\n",tamanio_bloque);
 	printf("cs: %i\n",tamanio_cache);
 	printf("w: %i\n",cantidad_vias);
 
-	//init();
-	//interpretar(archivo);
-	//destroy();
+	init();
+	interpretar(archivo_entrada, archivo_salida);
+	destroy();
 
 	if(archivo_salida != NULL && archivo_salida != stdout)
 		fclose(archivo_salida);
