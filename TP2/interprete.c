@@ -20,7 +20,7 @@ void instruccion_leer(FILE* archivo_entrada, FILE* archivo_salida){
 
 void interpretar(FILE* archivo_entrada, FILE* archivo_salida){
 	char instruccion[5] = "";
-	int i = 0;
+	int i = 1;
 	char tacho[MAX_LINEA];
 	while(!feof(archivo_entrada)){
 		fscanf(archivo_entrada,"%s", instruccion);
@@ -35,8 +35,8 @@ void interpretar(FILE* archivo_entrada, FILE* archivo_salida){
 			instruccion_escribir(archivo_entrada, archivo_salida);
 		}else if(strlen(instruccion) == 0){
 		}else{
-			fscanf(archivo_entrada, "%s\n", tacho);
-			fprintf(stderr, "Error de sintaxis. Linea: %i", i);
+			fscanf(archivo_entrada, "%[^\n]\n", tacho);
+			fprintf(stderr, "Error de sintaxis. Linea: %i\n", i);
 		}
 		strcpy(instruccion, "");
 		i++;
