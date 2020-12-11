@@ -20,7 +20,7 @@ typedef struct bloque{
 	bool dirty;
 	bool valido;
 	int distancia_lru;
-	short direccion;
+	unsigned short direccion;
 	char* datos;
 }bloque_t;
 
@@ -85,7 +85,7 @@ void write_block(int way, int setnum);
  * La función read byte(address) debe retornar el valor correspondiente 
  * a la posición de memoria address, buscándolo primero en el caché.
  */
-//char read_byte(int address);
+char read_byte(int address);
 
 /*
  * La función write byte(int address, char value) debe escribir el
