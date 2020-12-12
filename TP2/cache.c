@@ -36,6 +36,8 @@ via_t via_init(int cantidad_bloques_en_via){
  * como inválidos, la memoria simulada en 0 y la tasa de misses a 0.
  */
 void init(){
+	if(cache.inicializada)
+		return;
 	cache.tamanio_cache = tamanio_cache * KiB;
 	int tamanio_via = cache.tamanio_cache/cantidad_vias;
 	int cantidad_bloques_en_via = tamanio_via/tamanio_bloque;
@@ -55,6 +57,7 @@ void init(){
 	cache.cantidad_bitsTag = BITS_DIRECCION_MEMORIA - cache.cantidad_bitsIndex - cache.cantidad_bitsOffset;
 	cache.cantidad_bloques_en_via = cantidad_bloques_en_via;
 	cache.hit = false;
+	cache.inicializada = true;
 }
 
 
@@ -77,6 +80,7 @@ void destroy(){
 		via_destroy(cache.vias[i]);
 	}
 	free(cache.vias);
+	cache.inicializada = false;
 }
 
 /* 

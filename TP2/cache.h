@@ -29,6 +29,7 @@ typedef struct via{
 }via_t;
 
 typedef struct cache{
+	bool inicializada;
 	bool hit;
 	int aciertos;
 	int misses;
@@ -41,6 +42,7 @@ typedef struct cache{
 }cache_t;
 
 cache_t cache;
+
 
 /*
  * La función init() debe inicializar los bloques de la caché
