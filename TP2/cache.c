@@ -5,6 +5,8 @@
 
 cache_t cache = {false, false, 0, 0, NULL, 0, 0, 0, 0, 0};
 
+bool error = false;
+
 // Chequea que n este en [a,b]
 bool en_rango(int n, int a, int b){ 
 	return (n>=a && n<=b);
@@ -229,8 +231,9 @@ void actualizar_lru(int address){
  * a la posición de memoria address, buscándolo primero en el caché.
  */
 unsigned char read_byte(int address){
+	error = false;
 	if(!en_rango(address, 0, 65535)){
-		fprintf(stderr, "Error al realizar lectura: La direccion(%i) no es valida.\n",address);
+		error = true;	
 		return '\0'; 
 	}
 	if(!hay_hit(address)){
@@ -252,9 +255,10 @@ unsigned char read_byte(int address){
  */
  // WB/WA: Escribimos sólo en cache ||| escribimos en ram sólo cuando se saca el bloque.
 void write_byte(int address, unsigned char value){
+	error = false;
 	if(!en_rango(address, 0, 65535)){
-		fprintf(stderr, "Error al realizar escritura: La direccion(%i) no es valida.\n",address);
-		return; 
+		error = true;
+		return;
 	}
 	unsigned int offset = get_offset(address);
 	if(!hay_hit(address)){

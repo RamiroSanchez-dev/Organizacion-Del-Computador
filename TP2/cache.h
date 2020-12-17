@@ -45,7 +45,7 @@ typedef struct cache{
 
 cache_t cache;
 
-
+bool error;
 
 /*
  * La función init() debe inicializar los bloques de la caché
