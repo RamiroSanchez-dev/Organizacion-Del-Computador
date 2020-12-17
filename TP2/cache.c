@@ -203,10 +203,6 @@ char read_byte_cache(int address){
 	unsigned int set = find_set(address);
 	unsigned int offset = get_offset(address);
 	bloque_t* bloque = obtener_bloque_de_cache(address);
-	if(!bloque){
-		fprintf(stderr, "Error en read_byte_cache para el address(%i)\n",address);
-		return '\0'; 
-	}
 	return bloque->datos[offset];
 }
 
@@ -233,6 +229,10 @@ void actualizar_lru(int address){
  * a la posición de memoria address, buscándolo primero en el caché.
  */
 unsigned char read_byte(int address){
+	if(!en_rango(address, 0, 65535)){
+		fprintf(stderr, "Error al realizar lectura: La direccion(%i) no es valida.\n",address);
+		return '\0'; 
+	}
 	if(!hay_hit(address)){
 		read_block(get_blocknum(address));
 		cache.hit = false;
@@ -252,6 +252,10 @@ unsigned char read_byte(int address){
  */
  // WB/WA: Escribimos sólo en cache ||| escribimos en ram sólo cuando se saca el bloque.
 void write_byte(int address, unsigned char value){
+	if(!en_rango(address, 0, 65535)){
+		fprintf(stderr, "Error al realizar escritura: La direccion(%i) no es valida.\n",address);
+		return; 
+	}
 	unsigned int offset = get_offset(address);
 	if(!hay_hit(address)){
 		read_block(get_blocknum(address));
