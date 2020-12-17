@@ -185,7 +185,7 @@ void write_block(int way, int setnum){
 bloque_t* obtener_bloque_de_cache(int address){
 	unsigned int set = find_set(address);
 	for(int i = 0; i < cantidad_vias; i++){
-		bloque_t* bloque = &cache.vias[i].bloques[set];
+		bloque_t* bloque = &(cache.vias[i].bloques[set]);
 		if((get_blocknum(address) == get_blocknum(bloque->direccion)) && (bloque->valido)){
 			return bloque;
 		}
@@ -202,8 +202,10 @@ char read_byte_cache(int address){
 	unsigned int set = find_set(address);
 	unsigned int offset = get_offset(address);
 	bloque_t* bloque = obtener_bloque_de_cache(address);
-	if(!bloque) 
-		return '\0'; // TODO: stderr¿?
+	if(!bloque){
+		fprintf(stderr, "Error en read_byte_cache para el address(%i)\n",address);
+		return '\0'; 
+	}
 	return bloque->datos[offset];
 }
 

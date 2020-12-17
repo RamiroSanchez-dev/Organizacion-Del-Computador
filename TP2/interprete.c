@@ -8,14 +8,14 @@ void instruccion_escribir(FILE* archivo_entrada, FILE* archivo_salida){
 	unsigned char byte = 0;
 	fscanf(archivo_entrada, "%i,%hhu\n", &direccion, &byte);
 	write_byte(direccion, byte);
-	fprintf(archivo_salida, "Escritura:\tDireccion(%i)\t\tValor(%hhu)\t%s\n", direccion, byte, cache.hit?"Hit":"Miss");
+	fprintf(archivo_salida, "Escritura:\tDireccion(%05i)\t\tValor(%hhu)\t%s\n", direccion, byte, cache.hit?"Hit":"Miss");
 }
 
 void instruccion_leer(FILE* archivo_entrada, FILE* archivo_salida){
 	int direccion = 0;
 	fscanf(archivo_entrada, "%i\n",&direccion);
 	unsigned char byte = read_byte(direccion);
-	fprintf(archivo_salida,"Lectura:\tDireccion(%i)\t\tValor(%hhu)\t%s\n", direccion, byte, cache.hit?"Hit":"Miss");
+	fprintf(archivo_salida,"Lectura:\tDireccion(%05i)\t\tValor(%hhu)\t%s\n", direccion, byte, cache.hit?"Hit":"Miss");
 }
 
 void interpretar(FILE* archivo_entrada, FILE* archivo_salida){
