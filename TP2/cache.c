@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <math.h>
 
+cache_t cache = {false, false, 0, 0, NULL, 0, 0, 0, 0, 0};
 
 // Chequea que n este en [a,b]
 bool en_rango(int n, int a, int b){ 
@@ -37,7 +38,7 @@ via_t via_init(int cantidad_bloques_en_via){
  */
 void init(){
 	if(cache.inicializada)
-		return;
+		destroy();
 	cache.tamanio_cache = tamanio_cache * KiB;
 	int tamanio_via = cache.tamanio_cache/cantidad_vias;
 	int cantidad_bloques_en_via = tamanio_via/tamanio_bloque;

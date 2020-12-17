@@ -4,6 +4,7 @@
 #include <stdbool.h>
 #include <string.h>
 #include <stdint.h>
+#include <stdio.h>
 
 #define KiB (1024)
 #define TAMANIO_MEMORIA_PPAL (64*KiB)
@@ -41,7 +42,9 @@ typedef struct cache{
 	unsigned int tamanio_cache;
 }cache_t;
 
+
 cache_t cache;
+
 
 
 /*
