@@ -1,0 +1,39 @@
+/* Test 0 Tomo branch, No Tomo salto */
+
+INICIO:
+	addi $t0, $zero, 30
+	beq $t0,$t0, INICIO 
+	j 300
+
+
+/* Test 0 No tomo branch, tomo salto */
+
+
+Bucle:
+	addi $t0, $zero, 30
+	beq $t0, $zero, Bucle 
+	j 300
+
+/* Test 1 */
+
+	Dos branches no tomadas, debe tomar el jump
+
+	add $t0, $zero, $zero
+	addi $t1, $zero, 5
+	addi $t2, $zero, 1
+	j 20
+	nop
+	sub $t1 , $t1, $t2 
+	beq $t1, 4, ERROR
+	j48 	  
+	nop
+	nop
+	sub $t1 , $t1, $t2 
+	beq $t1, 4, ERROR
+	j 200
+	ERROR: addi $t3, $zero, 1
+
+
+
+	beq  
+
