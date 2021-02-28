@@ -1,0 +1,43 @@
+===== PROGRAMA 1 ====
+
+addi $t0, $zero, 56
+jalr $t2, $t0
+addi $t1, $zero, 1
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+nop
+addi $t3, $zero, 1
+
+// Observaciones
+/*
+	0	addi $t0, $zero, 56
+	4	jalr $t2, $t0
+	8	addi $t1, $zero, 1
+	12	nop
+	16	nop
+	20	nop
+	24	nop
+	28	nop
+	32	nop
+	36	nop
+	40	nop
+	44	nop
+	48	nop
+	52	nop
+	56	addi $t3, $zero, 1
+
+	* Si jalr funciona correctamente el resultado final será:
+		+ t0 = 56
+		+ PC = 60
+		+ t1 = 0
+		+ t2 = 8
+		+ t3 = 1
+*/
