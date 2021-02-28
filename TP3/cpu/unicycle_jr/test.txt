@@ -1,0 +1,77 @@
+===== PROGRAMA 1 ======
+addi $t0, $zero, 12
+jr $t0
+addi $t1, $zero, 1
+addi $t2, $zero, 1
+sub $t3, $t2, $t1
+
+// Observaciones
+/*
+	0 	addi $t0, $zero, 12
+	4 	jr $t0
+	8 	addi $t1, $zero, 1
+	12 	addi $t2, $zero, 1
+	16 	sub $t3, $t2, $t1
+	* Si el programa funciono bien REG[t3] = 1
+	* Si el programa funciono mal REG[t3] = 0
+*/
+
+
+===== PROGRAMA 2 ======
+addi $t0, $zero, 56
+jr $t0
+addi $t3, $zero, 1
+addi $t3, $zero, 1
+addi $t0, $t0, 48
+jr $t0
+addi $t3, $zero, 1
+addi $t3, $zero, 1
+addi $t3, $zero, 1
+addi $t0, $t0, -20
+jr $t0
+addi $t3, $zero, 1
+addi $t0, $t0, -12
+jr $t0
+addi $t0, $t0, -8
+jr $t0
+addi $t2, $zero, 1
+
+// Observaciones
+/*
+	0 	addi $t0, $zero, 56
+	4 	jr $t0
+	8	addi $t3, $zero, 1
+	12	addi $t3, $zero, 1
+	16	addi $t0, $t0, 48
+	20	jr $t0
+	24	addi $t3, $zero, 1
+	28	addi $t3, $zero, 1
+	32	addi $t3, $zero, 1
+	36	addi $t0, $t0, -20
+	40	jr $t0
+	44	addi $t3, $zero, 1
+	48	addi $t0, $t0, -12
+	52	jr $t0
+	56	addi $t0, $t0, -8
+	60	jr $t0
+	64	addi $t2, $zero, 1
+
+	El programa debe culminar con REG[t2] = 1
+	Y REG[t3] = 0
+	Si jr funciona correctamente.
+*/
+
+===== PROGRAMA 3 ======
+addi $t0, $zero, 4
+jr $t0
+addi $t1, $zero, 1
+
+// Observaciones
+/*
+	0	addi $t0, $zero, 4
+	4	jr $t0
+	8	addi $t1, $zero, 1
+
+	El programa no debe terminar, pues quedará saltando en la segunda instruccion para siempre.
+	En caso de que REG[t1] = 1, quiere decir que jr funciono mal
+*/
