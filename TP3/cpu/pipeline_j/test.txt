@@ -1,4 +1,4 @@
-/* Test 0 Tomo branch, No Tomo salto */
+/* Test 0: Tomo branch, No Tomo salto */
 
 INICIO:
 	addi $t0, $zero, 30
@@ -14,26 +14,24 @@ Bucle:
 	beq $t0, $zero, Bucle 
 	j 300
 
-/* Test 1 */
+/* Test 1: 	Dos branches no tomadas, debe tomar el jump*/
 
-	Dos branches no tomadas, debe tomar el jump
+	addi $t4, $zero, 4			# 0
+	add $t0, $zero, $zero		# 4
+	addi $t1, $zero, 5			# 8
+	addi $t2, $zero, 1			# 12
+	j 7							# 16
+	nop							# 20
+	sub $t1 , $t1, $t2 			# 24
+	beq $t1, $t4, ERROR			# 28
+	j 13						# 32
+	nop							# 36
+	nop							# 40
+	sub $t1 , $t1, $t2 			# 44
+	beq $t1, $t4, ERROR			# 48
+	j 20						# 52
+	ERROR: addi $t3, $zero, 1	# 56
 
-	add $t0, $zero, $zero
-	addi $t1, $zero, 5
-	addi $t2, $zero, 1
-	j 20
-	nop
-	sub $t1 , $t1, $t2 
-	beq $t1, 4, ERROR
-	j48 	  
-	nop
-	nop
-	sub $t1 , $t1, $t2 
-	beq $t1, 4, ERROR
-	j 200
-	ERROR: addi $t3, $zero, 1
-
-
-
-	beq  
-
+	/*
+	 * Si REG[t3] = 0 entonces j funciono correctamente.
+	 */
