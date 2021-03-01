@@ -31,8 +31,8 @@
 
 		"ForkBranch": {"type": "Fork", "x": 320, "y": 71, "size": 32, "in": "In", "out": ["Out1", "Out2", "Out3"]},
 
-		"MuxJumpReg":     {"type": "Multiplexer", "latency": 15, "x": 330, "y": 18, "size": 32, "sel": "JumpReg", "in": ["0", "1"], "out": "Out", "desc": {"default": "hello", "pt": "ola"}},
-		"MuxPCSource":     {"type": "Multiplexer", "latency": 15, "x": 360, "y": 230, "size": 32, "sel": "JumpReg", "in": ["0", "1"], "out": "Out", "desc": {"default": "hello", "pt": "ola"}},
+		"MuxJumpReg":     {"type": "Multiplexer", "latency": 15, "x": 330, "y": 18, "size": 32, "sel": "JumpReg", "in": ["0", "1"], "out": "Out", "desc": {"default": "Selecciona entre la direccion del PC + 4 o el valor del registro RS. "}},
+		"MuxPCSource":     {"type": "Multiplexer", "latency": 15, "x": 360, "y": 230, "size": 32, "sel": "JumpReg", "in": ["0", "1"], "out": "Out", "desc": {"default": "Selecciona entre PC + 4 y el registro RS. "}},
 		"ForkReg1":    {"type": "Fork", "x": 335, "y": 248, "size": 32, "in": "In", "out": ["Out1", "Out2"]},
 		"ForkJumpReg": {"type": "Fork", "x": 310, "y": 110, "size": 1, "in": "In", "out": ["Out1", "Out2"]}
 	},

@@ -53,7 +53,7 @@
 		"ForkBr1":    {"type": "Fork", "x": 555, "y": 62, "size": 1, "in": "In", "out": ["Out1", "Out2"]},
 		"ForkBr2":    {"type": "Fork", "x": 397, "y": 62, "size": 1, "in": "In", "out": ["Out1", "Out2"]},
 		"ForkBr3":    {"type": "Fork", "x": 185, "y": 62, "size": 1, "in": "In", "out": ["Out1", "Out2"]},
-		"OrFlush":    {"type": "Or", "x": 375, "y": 70, "in1": "Stall", "in2": "Branch", "out": "Flush"},
+		"OrFlush":    {"type": "Or", "x": 375, "y": 70, "in1": "Stall", "in2": "Branch", "out": "Flush","desc": {"default": "Compuerta lógica OR que detecta los casos en que se tiene que hacer flush en este pipeline"}},
 		
 		"MEM/WB":     {"type": "PipelineRegister", "x": 680, "y": 110, "regs": {"Result": 32, "ReadData": 32, "RegBankDst": 5, "MemToReg": 1, "RegWrite": 1}, "desc": {"default": "Register that separates two pipeline stages.\nThe values that transition to the next stage are stored here temporarily.", "pt": "Registo que separa duas etapas do pipeline.\nOs valores que transitam para a próxima etapa são armazenados aqui temporariamente."}},
 		
@@ -74,22 +74,22 @@
 
 
 
-		"MuxAdress":     {"type": "Multiplexer", "latency": 15, "x": 20, "y": 330, "size": 32, "sel": "JpOBr", "in": ["0", "1"], "out": "Out", "desc": {"default": "Selects the result of the ALU or the value read from memory to write to the destination register (WriteData).", "pt": "Selecciona o resultado da ALU ou o valor lido da memória para escrever no registo de destino (WriteData)."}},
+		"MuxAdress":     {"type": "Multiplexer", "latency": 15, "x": 20, "y": 330, "size": 32, "sel": "JpOBr", "in": ["0", "1"], "out": "Out", "desc": {"default": "Selecciona la direccion proveniente del branch o del jump según la instruccion que se haya decodificado corresponda"}},
 
 
-		"ForkMuxFwdA":   {"type": "Fork", "x": 440, "y": 247, "size": 32, "in": "In", "out": ["Out1", "Out2"]},
-
-
-
+		"ForkMuxFwdA":   {"type": "Fork", "x": 440, "y": 247, "size": 32, "in": "In", "out": ["Out1", "Out2"],"desc": {"default": "Manda el cable al MuxAdress"}},
 
 
 
-		"MuxSalvado":     {"type": "Multiplexer", "latency": 15, "x": 453, "y": 230, "size": 32, "sel": "Selec", "in": ["0", "1"], "out": "Out", "desc": {"default": "Selecciona entre el registro A y el PC.", "pt": "Selecciona o resultado da ALU ou o valor lido da memória para escrever no registo de destino (WriteData)."}},
+
+
+
+		"MuxSalvado":     {"type": "Multiplexer", "latency": 15, "x": 453, "y": 230, "size": 32, "sel": "Selec", "in": ["0", "1"], "out": "Out", "desc": {"default": "Selecciona entre el registro A y el PC."}},
 		
 
-		"ForkSelJump":  {"type": "Fork", "x": 460, "y": 120, "size": 1, "in": "In", "out": ["Out1", "Out2"]},
+		"ForkSelJump":  {"type": "Fork", "x": 460, "y": 120, "size": 1, "in": "In", "out": ["Out1", "Out2"],"desc": {"default": "Lleva los cables que indican si la instruccion es un jump"}},
 
-		"ForkDirec":  {"type": "Fork", "x": 435, "y": 175, "size": 32, "in": "In", "out": ["Out1", "Out2"]}
+		"ForkDirec":  {"type": "Fork", "x": 435, "y": 175, "size": 32, "in": "In", "out": ["Out1", "Out2"],"desc": {"default": "Lleva los cables que indican la direccion."}}
 
 		
 

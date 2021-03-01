@@ -53,7 +53,7 @@
 		"ForkBr1":    {"type": "Fork", "x": 555, "y": 62, "size": 1, "in": "In", "out": ["Out1", "Out2"]},
 		"ForkBr2":    {"type": "Fork", "x": 397, "y": 62, "size": 1, "in": "In", "out": ["Out1", "Out2"]},
 		"ForkBr3":    {"type": "Fork", "x": 185, "y": 62, "size": 1, "in": "In", "out": ["Out1", "Out2"]},
-		"OrFlush":    {"type": "Or", "x": 375, "y": 70, "in1": "Stall", "in2": "Branch", "out": "Flush"},
+		"OrFlush":    {"type": "Or", "x": 375, "y": 70, "in1": "Stall", "in2": "Branch", "out": "Flush","desc": {"default": "Compuerta lógica OR que detecta los casos en que se tiene que hacer flush en este pipeline"}},
 		
 		"MEM/WB":     {"type": "PipelineRegister", "x": 680, "y": 110, "regs": {"Result": 32, "ReadData": 32, "RegBankDst": 5, "MemToReg": 1, "RegWrite": 1}, "desc": {"default": "Register that separates two pipeline stages.\nThe values that transition to the next stage are stored here temporarily.", "pt": "Registo que separa duas etapas do pipeline.\nOs valores que transitam para a próxima etapa são armazenados aqui temporariamente."}},
 		
@@ -74,16 +74,16 @@
 		
 
 
-		"MuxAdress":     {"type": "Multiplexer", "latency": 15, "x": 20, "y": 330, "size": 32, "sel": "JpOBr", "in": ["0", "1"], "out": "Out", "desc": {"default": "Selects the result of the ALU or the value read from memory to write to the destination register (WriteData).", "pt": "Selecciona o resultado da ALU ou o valor lido da memória para escrever no registo de destino (WriteData)."}},
+		"MuxAdress":     {"type": "Multiplexer", "latency": 15, "x": 20, "y": 330, "size": 32, "sel": "JpOBr", "in": ["0", "1"], "out": "Out", "desc": {"default": "Selecciona la direccion proveniente del branch o del jump según la instruccion que se haya decodificado corresponda"}},
 
 		
 		"ForkOutBranch":   {"type": "Fork", "x": 630, "y": 185, "size": 1, "in": "In", "out": ["Out1", "Out2"]},
 
 
 
-		"DistDir":    {"type": "Distributor", "x": 230, "y": 172, "in": {"id": "In", "size": 32}, "out": [{"msb": 31, "lsb": 0}, {"msb": 31, "lsb": 28}]},
+		"DistDir":    {"type": "Distributor", "x": 230, "y": 172, "in": {"id": "In", "size": 32}, "out": [{"msb": 31, "lsb": 0}, {"msb": 31, "lsb": 28}],"desc": {"default": "Distribuye los 4 bits mas significativos del PC al concatenador y la direccion entera del PC al pipeline register."}},
 
-		"ConcatJump": {"type": "Concatenator", "x": 350, "y": 405, "in1": {"id": "In1", "size": 4}, "in2": {"id": "In2", "size": 28}, "out": "Out", "desc": {"default": "Concatenates the 4 most significant bits of the PC with the 28 bits of the target jump address to form the final 32 bits address.", "pt": "Concatena os 4 bits mais significativos do PC com os 28 bits do endereço alvo de salto para formar o endereço final de 32 bits."}}
+		"ConcatJump": {"type": "Concatenator", "x": 350, "y": 405, "in1": {"id": "In1", "size": 4}, "in2": {"id": "In2", "size": 28}, "out": "Out", "desc": {"default": "Concatena los 4 bits mas significativos del PC con los 28 bits del target para formar el jump address."}}
 
 
 
