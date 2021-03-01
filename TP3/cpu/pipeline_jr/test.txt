@@ -1,0 +1,57 @@
+==== Programa 1 ====
+
+	addi $t0, $zero, 220
+	sw $t0, 0($zero)
+	lw $t1, 0($zero)
+	jr $t1
+
+/*
+ * Sólo un ciclo de stall por tener que leer de memoria.
+ * No son dos gracias al forwarding unit.
+ */
+
+==== Programa 2 ====
+
+	addi $t0, $zero, 220
+	sw $t0, 0($zero)
+	lw $t1, 0($zero)
+	nop
+	jr $t1
+
+/*
+ * No es necesario un ciclo de stall gracias al forwarding unit.
+ */
+
+==== Programa 3 ====
+
+	addi $t0, $zero, 220
+	sw $t0, 0($zero)
+	lw $t1, 0($zero)
+	add $t0, $zero, $zero
+	jr $t1
+
+/*
+ * No es necesario ciclo de stall gracias al forwarding unit.
+ */
+
+==== Programa 4 ====
+
+	addi $t0, $zero, 12
+	jr $t0
+
+/* 
+ * No es necesario ciclo de stall gracias al forwarding unit.
+ */
+
+==== Programa 5 ====
+	
+	addi $t0, $zero, 12		# 0
+	jr $t0					# 4
+	addi $t1, $zero, 1		# 8
+	addi $t2, $zero, 1		# 12
+
+/*
+ * Si el salto se realizó correctamente los valores serán:
+ * REG[t1] = 0
+ * REG[t2] = 1
+ */

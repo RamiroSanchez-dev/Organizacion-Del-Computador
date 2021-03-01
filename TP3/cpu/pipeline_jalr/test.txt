@@ -1,0 +1,60 @@
+==== Programa 1 ====
+
+	addi $t1, $zero, 12		# 0
+	jalr $t2, $t1			# 4
+	addi $t3, $zero, 1		# 8
+	addi $t4, $zero, 1		# 12
+
+/*
+ * Si el jarl funciona correctamente entonces los valores finales seran:
+ * REG[t2] = 8
+ * REG[t3] = 0
+ * REG[t4] = 1
+ */
+
+==== Programa 2 ====
+
+	addi $t0, $zero, 220
+	sw $t0, 0($zero)
+	lw $t1, 0($zero)
+	jalr $t2, $t1
+
+/*
+ * Sólo un ciclo de stall por tener que leer de memoria.
+ * No son dos gracias al forwarding unit.
+ */
+
+==== Programa 3 ====
+
+	addi $t0, $zero, 220
+	sw $t0, 0($zero)
+	lw $t1, 0($zero)
+	nop
+	jalr $t2, $t1
+
+/*
+ * No es necesario un ciclo de stall gracias al forwarding unit.
+ */
+
+==== Programa 4 ====
+
+	addi $t0, $zero, 12
+	jalr $t1, $t0
+
+/* 
+ * No es necesario ciclo de stall gracias al forwarding unit.
+ */
+
+==== Programa 5 ====
+
+	addi $t0, $zero, 20		# 0
+	jalr $t1, $t0			# 4
+	add $t2, $t1, $t1		# 8
+	and $t3, $t1, $t1		# 12
+	or $t4, $t1, $t1		# 16
+	nor $t5, $t1, $t1		# 20
+	add $t6, $t1, $t1		# 24
+
+/*
+ * Tomar el salto realiza un flush sobre las demas instrucciones escritas y trae al pipeline desde la 20 en adelante
+ */
