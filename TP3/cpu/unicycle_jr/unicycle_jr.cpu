@@ -30,7 +30,7 @@
 		"DataMem":    {"type": "DataMemory", "latency": 400, "x": 480, "y": 242, "size": 100, "address": "Address", "write_data": "WriteData", "out": "ReadData", "mem_read": "MemRead", "mem_write": "MemWrite"},
 		"MuxMem":     {"type": "Multiplexer", "latency": 15, "x": 580, "y": 270, "size": 32, "sel": "MemToReg", "in": ["0", "1"], "out": "Out", "desc": {"default": "Selects the result of the ALU or the value read from memory to write to the destination register (WriteData).", "pt": "Selecciona o resultado da ALU ou o valor lido da memória para escrever no registo de destino (WriteData)."}},
 
-		"MuxJumpReg":     {"type": "Multiplexer", "latency": 15, "x": 330, "y": 18, "size": 32, "sel": "JumpReg", "in": ["0", "1"], "out": "Out", "desc": {"default": "hello", "pt": "ola"}},
+		"MuxJumpReg":     {"type": "Multiplexer", "latency": 15, "x": 330, "y": 18, "size": 32, "sel": "JumpReg", "in": ["0", "1"], "out": "Out", "desc": {"default": "Selecciona entre la direccion del PC + 4 o el valor del registro RS. "}},
 		"ForkReg1":    {"type": "Fork", "x": 335, "y": 248, "size": 32, "in": "In", "out": ["Out1", "Out2"]}
 	},
 	"wires": [
